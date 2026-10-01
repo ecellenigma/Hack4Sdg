@@ -1,0 +1,28 @@
+.home { max-width: 1120px; margin: 0 auto; padding: 0 24px 96px; }
+.hero { padding: 12vh 0 56px; }
+.hero h1 { font-size: clamp(64px, 14vw, 168px); margin: 12px 0 20px; letter-spacing: -0.015em; }
+.hero h1 em { font-style: italic; font-weight: 400; color: var(--accent); }
+.lede { max-width: 56ch; font-size: 16px; color: var(--ink-soft); margin-bottom: 28px; }
+.cta { display: flex; gap: 12px; flex-wrap: wrap; }
+.cta .btn, .foot .btn { text-decoration: none; display: inline-block; }
+.stripe { display: flex; height: 14px; margin-top: 56px; }
+.stripe span { flex: 1; }
+.home section { padding-top: 72px; }
+.home h2 { font-size: clamp(32px, 5vw, 56px); margin-bottom: 28px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 0; border-top: 2px solid var(--ink); border-left: 2px solid var(--ink); }
+.tile { position: relative; padding: 24px 22px 24px 28px; border-right: 2px solid var(--ink); border-bottom: 2px solid var(--ink); background: var(--paper); transition: background .15s, color .15s; }
+.tile::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 10px; background: var(--c); }
+.tile:hover { background: var(--ink); color: var(--paper); }
+.tile .num { font-family: var(--display); font-size: 56px; line-height: 1; color: var(--c); display: block; }
+.tile h3 { font-size: 22px; margin: 6px 0 10px; }
+.tile p { font-size: 13px; opacity: .8; }
+.steps { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 32px 24px; }
+.steps li { border-top: 2px solid var(--ink); padding-top: 12px; }
+.steps h3 { font-size: 26px; margin: 4px 0 8px; }
+.steps p { color: var(--ink-soft); font-size: 13px; }
+.judging { border: 2px solid var(--ink); padding: 32px !important; margin-top: 72px; background: var(--paper-2); }
+.judging p { max-width: 60ch; margin-bottom: 20px; }
+.judging ul { list-style: none; display: grid; gap: 8px; }
+.judging li { display: flex; gap: 14px; align-items: baseline; font-size: 15px; border-bottom: 1px solid var(--ink); padding-bottom: 8px; }
+.judging li span { font-family: var(--display); font-size: 28px; width: 28px; }
+.foot { display: flex; justify-content: space-between; align-items: center; margin-top: 72px; flex-wrap: wrap; gap: 16px; }

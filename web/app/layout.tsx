@@ -6,8 +6,8 @@ const display = Fraunces({ variable: "--font-display", subsets: ["latin"], axes:
 const mono = DM_Mono({ variable: "--font-mono", subsets: ["latin"], weight: ["400", "500"] });
 
 export const metadata: Metadata = {
-  title: "Hack4SDG – Judging",
-  description: "Judging desk for Hack for SDG, the Global Goals Hackathon.",
+  title: "Hack for SDG",
+  description: "Hack for SDG, the Global Goals Hackathon: pitch a solution to a real-world problem tied to the UN Sustainable Development Goals.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

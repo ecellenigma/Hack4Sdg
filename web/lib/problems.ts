@@ -1,0 +1,21 @@
+// Problem statements from the official Hack4SDG brochure.
+export const PROBLEMS: Record<number, string> = {
+  1: "Develop a solution that provides sustainable income opportunities for marginalized communities, helping them break the cycle of poverty.",
+  2: "Create an innovative approach to reduce food waste and ensure equitable distribution of food to combat hunger in urban and rural areas.",
+  3: "Design a digital health platform that offers preventive care and health education to underserved populations, focusing on reducing the incidence of chronic diseases.",
+  4: "Develop an interactive learning tool that enhances access to quality education for children in remote areas, incorporating local languages and cultures.",
+  5: "Create a project that addresses gender-based violence through community engagement and technology-driven reporting and support systems.",
+  6: "Design a low-cost water purification system that can be easily deployed in areas lacking access to clean water, ensuring safe drinking water for all.",
+  7: "Develop a renewable energy solution that can be implemented in off-grid communities, providing reliable and affordable electricity.",
+  8: "Create a platform that connects skilled workers in developing regions with global job opportunities, promoting fair wages and decent working conditions.",
+  9: "Design a smart infrastructure project that enhances the resilience and sustainability of urban areas, focusing on transportation, energy, and communication systems.",
+  10: "Develop a solution that promotes social and economic inclusion for marginalized groups, addressing barriers to equal opportunities.",
+  11: "Create a smart city application that improves urban living through efficient resource management, waste reduction, and enhanced public services.",
+  12: "Propose a project that encourages sustainable consumption patterns, reducing waste and promoting recycling and reuse.",
+  13: "Develop a platform that helps individuals and businesses track and reduce their carbon footprint, offering actionable insights and incentives.",
+  14: "Create a solution that addresses marine pollution and promotes the conservation of marine ecosystems through innovative technologies and community engagement.",
+  15: "Design a project that supports reforestation and biodiversity conservation, promoting sustainable land use practices.",
+  16: "Develop a secure and transparent system for reporting and addressing corruption, ensuring accountability and justice.",
+  17: "Create a platform that fosters collaboration between governments, businesses, and civil society to achieve the SDGs, facilitating resource sharing and joint initiatives.",
+  18: "Participants can come up with projects of their own.",
+};
