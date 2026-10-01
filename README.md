@@ -13,14 +13,26 @@ College students form teams (max 4), pick a problem statement aligned with the U
 
 ## Planned architecture
 
-- **Submissions:** teams submit via a form (details plus a PDF deck). Open question: Google Forms → Sheets/Drive, or direct to Supabase.
-- **Storage:** PDFs in Supabase Storage (1 GB free) or Cloudflare R2 (10 GB free).
-- **Database:** judging scores and judge accounts in Supabase (or MongoDB).
+- **Submissions:** teams submit via our own form (details plus a PDF deck) straight into Supabase.
+- **Storage:** PDFs in a private Supabase Storage bucket (1 GB free; R2 is the fallback).
+- **Database:** Supabase Postgres with row-level security. Judges only see their own scores; only admins see the leaderboard.
+- **Frontend:** Next.js in `web/`.
 - **Dashboard:** reads submissions, shows the PDF viewer and a scoring form, and ranks teams live to pick the top 5.
 
 ## Status
 
-Early planning. Nothing is built yet.
+Built: Supabase schema (`supabase/schema.sql`) and the judge dashboard (`web/`). Next: submission form, then the homepage.
+
+## Run it
+
+```bash
+cd web
+cp .env.example .env.local   # fill in the Supabase URL + publishable key
+npm install && npm run dev
+```
+
+**Approving a judge:** they sign up at `/login`, then an admin runs
+`insert into judges (user_id, name, is_admin) select id, 'Name', false from auth.users where email = 'judge@example.com';`
 
 ## Event flow
 
