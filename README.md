@@ -14,7 +14,7 @@ College students form teams (max 4), pick a problem statement aligned with the U
 ## Planned architecture
 
 - **Submissions:** teams submit via our own form (details plus a PDF deck) straight into Supabase.
-- **Storage:** PDFs in a private Cloudflare R2 bucket (10 GB free). Teams upload via a presigned URL from `/api/upload-url`; judges read via `/api/deck-url`, which checks their Supabase login first.
+- **Storage:** PDFs live in a private Supabase Storage bucket (1 GB free), which is what runs today. Cloudflare R2 support is built in but switched off: R2 needs a payment card on file even for the free tier, so we left it alone. To turn it on, add the four `R2_*` values to the environment and set up the bucket CORS from `cloudflare-r2-cors.json`; new uploads then go to R2 and old ones keep working. Judges read decks through `/api/deck-url`, which checks their Supabase login first.
 - **Database:** Supabase Postgres with row-level security. Judges only see their own scores; only admins see the leaderboard.
 - **Frontend:** Next.js in `web/`.
 - **Dashboard:** reads submissions, shows the PDF viewer and a scoring form, and ranks teams live to pick the top 5.
