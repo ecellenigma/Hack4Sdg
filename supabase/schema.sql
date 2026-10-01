@@ -124,3 +124,4 @@ insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_typ
 values ('decks', 'decks', false, 15728640, array['application/pdf']);
 create policy "anyone uploads decks" on storage.objects for insert to anon, authenticated with check (bucket_id = 'decks');
 create policy "judges read decks" on storage.objects for select to authenticated using (bucket_id = 'decks' and public.is_judge());
+create policy "admin deletes decks" on storage.objects for delete to authenticated using (bucket_id = 'decks' and public.is_admin());
