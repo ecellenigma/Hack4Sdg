@@ -1,9 +1,11 @@
 "use client";
+import "./submit.css";
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { SDG_COLORS, SDG_NAMES } from "@/lib/sdg";
+import AppBar, { Stripe } from "../appbar";
 
 const MAX_BYTES = 15 * 1024 * 1024;
 
@@ -58,70 +60,90 @@ function SubmitForm() {
 
   if (done)
     return (
-      <main style={{ minHeight: "100%", display: "grid", placeItems: "center", padding: 24, textAlign: "center" }}>
-        <div className="rise">
-          <p className="label">Received</p>
-          <h1 style={{ fontSize: "clamp(44px, 8vw, 80px)", margin: "8px 0 16px" }}>You&apos;re in.</h1>
-          <p style={{ marginBottom: 24 }}>Your deck is submitted. The organisers will be in touch by email.</p>
-          <Link className="btn" href="/" style={{ textDecoration: "none", display: "inline-block" }}>Back home</Link>
-        </div>
-      </main>
+      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+        <AppBar />
+        <main style={{ flex: 1, display: "grid", placeItems: "center", padding: 24, textAlign: "center" }}>
+          <div className="rise">
+            <p className="label">Received</p>
+            <h1 style={{ fontSize: "clamp(56px, 11vw, 140px)", margin: "10px 0 20px" }}>
+              You&apos;re <em style={{ color: "var(--yellow)" }}>in.</em>
+            </h1>
+            <p style={{ color: "var(--mute)", marginBottom: 32, maxWidth: "40ch", marginInline: "auto" }}>
+              Your deck is submitted and will go to the judges without your names on it. The organisers will email you.
+            </p>
+            <Link className="btn" href="/">Back home</Link>
+          </div>
+        </main>
+        <Stripe />
+      </div>
     );
 
-  const field = { display: "grid", gap: 6 } as const;
+  const field = { display: "grid", gap: 7 } as const;
+  const accent = sdg ? SDG_COLORS[sdg] : "var(--yellow)";
   return (
-    <main style={{ maxWidth: 680, margin: "0 auto", padding: "48px 24px 96px" }}>
-      <Link href="/" className="label">← Hack for SDG</Link>
-      <h1 className="rise" style={{ fontSize: "clamp(44px, 8vw, 80px)", margin: "8px 0 8px" }}>Submit your idea</h1>
-      <p style={{ color: "var(--ink-soft)", marginBottom: 32 }}>One submission per team (max 4 members). Upload your presentation as a PDF, 15 MB or less. Judging is blind: judges never see team names, so leave your names, college and logos off the slides.</p>
+    <div>
+      <AppBar><Link href="/" className="label">← Back</Link></AppBar>
+      <main className="submit-grid">
+        <aside className="submit-side rise">
+          <p className="label">Submissions</p>
+          <h1 style={{ fontSize: "clamp(48px, 7vw, 96px)", margin: "10px 0 24px" }}>
+            Submit your <em style={{ color: "var(--yellow)" }}>idea.</em>
+          </h1>
+          <ul className="rules">
+            <li><b>1</b>One submission per team, up to four members.</li>
+            <li><b>2</b>A single PDF, 15 MB or less. Using PowerPoint or Slides? Export as PDF first.</li>
+            <li><b>3</b>Judging is blind. Leave your names, college and logos off the slides.</li>
+          </ul>
+        </aside>
 
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: 24 }}>
-        <div style={field}>
-          <label className="label" htmlFor="team">Team name</label>
-          <input id="team" name="team" type="text" required maxLength={100} />
-        </div>
+        <form onSubmit={onSubmit} className="submit-form rise" style={{ animationDelay: "120ms", ["--accent" as string]: accent }}>
+          <div style={field}>
+            <label className="label" htmlFor="team">Team name</label>
+            <input id="team" name="team" type="text" required maxLength={100} />
+          </div>
 
-        <fieldset style={{ border: 0, display: "grid", gap: 8 }}>
-          <legend className="label" style={{ marginBottom: 6 }}>Members (up to 4)</legend>
-          {members.map((m, i) => (
-            <input key={i} type="text" aria-label={`Member ${i + 1}`} placeholder={`Member ${i + 1}${i ? " (optional)" : ""}`} value={m} maxLength={80}
-              onChange={(e) => setMembers((p) => p.map((v, j) => (j === i ? e.target.value : v)))} />
-          ))}
-        </fieldset>
+          <fieldset style={{ border: 0, display: "grid", gap: 8 }}>
+            <legend className="label" style={{ marginBottom: 8 }}>Members (up to 4)</legend>
+            {members.map((m, i) => (
+              <input key={i} type="text" aria-label={`Member ${i + 1}`} placeholder={`Member ${i + 1}${i ? " (optional)" : ""}`} value={m} maxLength={80}
+                onChange={(e) => setMembers((p) => p.map((v, j) => (j === i ? e.target.value : v)))} />
+            ))}
+          </fieldset>
 
-        <div style={field}>
-          <label className="label" htmlFor="email">Contact email</label>
-          <input id="email" name="email" type="email" required />
-        </div>
+          <div style={field}>
+            <label className="label" htmlFor="email">Contact email</label>
+            <input id="email" name="email" type="email" required />
+          </div>
 
-        <div style={field}>
-          <label className="label" htmlFor="sdg">Sustainable Development Goal</label>
-          <select id="sdg" value={sdg} onChange={(e) => setSdg(+e.target.value)} required
-            style={{ border: "2px solid var(--ink)", borderLeft: `12px solid ${sdg ? SDG_COLORS[sdg] : "var(--ink)"}`, background: "#fbf9f2", padding: 10, font: "inherit" }}>
-            <option value={0}>Choose a goal…</option>
-            {Object.entries(SDG_NAMES).map(([n, name]) => <option key={n} value={n}>{n === "18" ? "18. Student innovation (your own idea)" : `${n}. ${name}`}</option>)}
-          </select>
-        </div>
+          <div style={field}>
+            <label className="label" htmlFor="sdg">Sustainable Development Goal</label>
+            <select id="sdg" value={sdg} onChange={(e) => setSdg(+e.target.value)} required style={{ borderLeft: `10px solid ${accent}` }}>
+              <option value={0}>Choose a goal…</option>
+              {Object.entries(SDG_NAMES).map(([n, name]) => <option key={n} value={n}>{n === "18" ? "18. Student innovation (your own idea)" : `${n}. ${name}`}</option>)}
+            </select>
+          </div>
 
-        <div style={field}>
-          <label className="label" htmlFor="title">Project title</label>
-          <input id="title" name="title" type="text" required maxLength={200} />
-        </div>
+          <div style={field}>
+            <label className="label" htmlFor="title">Project title</label>
+            <input id="title" name="title" type="text" required maxLength={200} />
+          </div>
 
-        <div style={field}>
-          <label className="label" htmlFor="summary">One-line summary (optional)</label>
-          <textarea id="summary" name="summary" rows={3} maxLength={500} />
-        </div>
+          <div style={field}>
+            <label className="label" htmlFor="summary">One-line summary (optional)</label>
+            <textarea id="summary" name="summary" rows={3} maxLength={500} />
+          </div>
 
-        <div style={field}>
-          <label className="label" htmlFor="deck">Presentation (PDF)</label>
-          <input id="deck" name="deck" type="file" accept="application/pdf" required style={{ border: "2px dashed var(--ink)", padding: 16, font: "inherit" }} />
-        </div>
+          <div style={field}>
+            <label className="label" htmlFor="deck">Presentation (PDF)</label>
+            <input id="deck" name="deck" type="file" accept="application/pdf" required className="drop" />
+          </div>
 
-        {err && <p role="alert" style={{ color: "var(--accent)" }}>{err}</p>}
-        <button className="btn" disabled={busy}>{busy ? "Uploading…" : "Submit"}</button>
-      </form>
-    </main>
+          {err && <p role="alert" style={{ color: "var(--red)" }}>{err}</p>}
+          <button className="btn" disabled={busy}>{busy ? "Uploading…" : "Submit idea →"}</button>
+        </form>
+      </main>
+      <Stripe />
+    </div>
   );
 }
 

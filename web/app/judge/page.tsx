@@ -3,7 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase, type Criterion, type Judge, type Submission } from "@/lib/supabase";
-import { SDG_COLORS, SDG_NAMES } from "@/lib/sdg";
+import { SDG_COLORS, SDG_NAMES, onColor } from "@/lib/sdg";
+import { Logo } from "../appbar";
 import "./judge.css";
 
 type ScoreMap = Record<string, Record<number, number>>; // submission -> criterion -> value
@@ -115,8 +116,8 @@ export default function JudgeDesk() {
     return (
       <div className="empty">
         <div>
-          <h1 style={{ fontSize: 40 }}>Awaiting approval</h1>
-          <p style={{ margin: "12px 0 20px" }}>You&apos;re signed in, but an organiser hasn&apos;t approved your judge access yet.</p>
+          <h1 style={{ fontSize: 56 }}>Awaiting <em style={{ color: "var(--yellow)" }}>approval</em></h1>
+          <p style={{ margin: "14px 0 24px", color: "var(--mute)" }}>You&apos;re signed in, but an organiser hasn&apos;t approved your judge access yet.</p>
           <button className="btn ghost" onClick={signOut}>Sign out</button>
         </div>
       </div>
@@ -126,55 +127,58 @@ export default function JudgeDesk() {
   return (
     <div className="desk">
       <aside className="col">
+        <div className="brandrow"><span className="brand" style={{ fontSize: 16 }}><Logo />Hack for SDG</span><span className="label">{judge?.name}</span></div>
         <div className="top">
-          <p className="label">Judging desk · {judge?.name}</p>
-          <h1 style={{ fontSize: 32, marginTop: 4 }}>{doneCount}/{subs.length} scored</h1>
+          <p className="label">Your progress</p>
+          <h1>{doneCount}<em>/{subs.length}</em> scored</h1>
+          <div className="progress"><i style={{ width: `${subs.length ? (doneCount / subs.length) * 100 : 0}%` }} /></div>
           <div className="filters">
             <select aria-label="Filter by SDG" value={sdgFilter} onChange={(e) => setSdgFilter(+e.target.value)}>
               <option value={0}>All goals</option>
               {Object.entries(SDG_NAMES).map(([n, name]) => <option key={n} value={n}>{n}. {name}</option>)}
             </select>
-            <button className="btn ghost" aria-pressed={pendingOnly} onClick={() => setPendingOnly((v) => !v)} style={{ padding: "6px 10px", background: pendingOnly ? "var(--ink)" : undefined, color: pendingOnly ? "var(--paper)" : undefined }}>Unscored</button>
+            <button className="chipbtn" aria-pressed={pendingOnly} onClick={() => setPendingOnly((v) => !v)}>Unscored</button>
           </div>
         </div>
         {visible.map((s, i) => (
           <button key={s.id} className="card rise" style={{ ["--c" as string]: SDG_COLORS[s.sdg], animationDelay: `${Math.min(i, 12) * 30}ms` }} aria-current={s.id === selected} onClick={() => pick(s.id)}>
-            <div className="meta"><span>SDG {s.sdg}</span>{isDone(s.id) && <span className="done">✓ scored</span>}</div>
+            <div className="meta"><span>SDG {s.sdg}</span>{isDone(s.id) && <span className="done">✓ Scored</span>}</div>
             <h3>Entry {String(s.number).padStart(3, "0")}</h3>
-            <div style={{ fontSize: 12, opacity: .8 }}>{s.title}</div>
+            <div className="t">{s.title}</div>
           </button>
         ))}
         {!visible.length && <p className="empty" style={{ height: 160 }}>{subs.length ? "Nothing matches." : "No submissions yet."}</p>}
       </aside>
 
-      <section className="stage" style={{ ["--c" as string]: color }}>
+      <section className="stage" style={{ ["--c" as string]: color, ["--fg-on" as string]: onColor(color) }}>
         {sub ? (
           <>
             <div className="stage-head">
               <span className="chip">SDG {sub.sdg} · {SDG_NAMES[sub.sdg]}</span>
               <h2>Entry {String(sub.number).padStart(3, "0")}</h2>
               <p><strong>{sub.title}</strong></p>
-              {sub.summary && <p style={{ color: "var(--ink-soft)", marginTop: 4 }}>{sub.summary}</p>}
+              {sub.summary && <p style={{ color: "var(--mute)", marginTop: 4 }}>{sub.summary}</p>}
             </div>
             {pdfUrl ? <iframe src={pdfUrl} title={`Entry ${sub.number} deck`} /> : <div className="empty">Loading deck…</div>}
           </>
         ) : <div className="empty">Pick a team on the left to start judging.</div>}
       </section>
 
-      <aside className="panel" style={{ padding: 0 }}>
+      <aside className="panel" style={{ ["--c" as string]: color, ["--fg-on" as string]: onColor(color) }}>
         <div className="bar">
           {judge?.is_admin ? <Link href="/judge/leaderboard">Leaderboard →</Link> : <span />}
           <button className="link" onClick={signOut}>Sign out</button>
         </div>
         {sub ? (
-          <div style={{ padding: "0 20px 20px", display: "flex", flexDirection: "column", gap: 20 }}>
+          <div className="panel-body">
             <div>
               <p className="label">Your score</p>
-              <div className="total">{pct ?? "–"}<span style={{ fontSize: 20 }}>{pct !== null && "%"}</span></div>
+              <div className="total">{pct ?? "–"}{pct !== null && <small>%</small>}</div>
+              <div className="meter"><i style={{ width: `${pct ?? 0}%` }} /></div>
             </div>
             {criteria.map((c) => (
               <div className="crit" key={c.id}>
-                <p className="label">{c.label}{c.weight !== 1 && ` · ×${c.weight}`}</p>
+                <p className="crit-label">{c.label}{c.weight !== 1 && ` · ×${c.weight}`}</p>
                 <div className="row" role="group" aria-label={c.label}>
                   {Array.from({ length: c.max_score + 1 }, (_, v) => (
                     <button key={v} className="pip" aria-pressed={draft[c.id] === v} onClick={() => setDraft((d) => ({ ...d, [c.id]: v }))}>{v}</button>
@@ -184,10 +188,10 @@ export default function JudgeDesk() {
             ))}
             <div>
               <label className="label" htmlFor="note">Notes</label>
-              <textarea id="note" rows={4} value={note} onChange={(e) => setNote(e.target.value)} style={{ marginTop: 6 }} />
+              <textarea id="note" rows={4} value={note} onChange={(e) => setNote(e.target.value)} style={{ marginTop: 8 }} />
             </div>
             <button className="btn" onClick={save} disabled={saving}>{saving ? "Saving…" : "Save scores"}</button>
-            {msg && <p role="status" className="sum" style={{ color: msg === "Saved." ? "var(--ok)" : "var(--accent)" }}>{msg}</p>}
+            {msg && <p role="status" className="sum" style={{ color: msg === "Saved." ? "var(--ok)" : "var(--red)" }}>{msg}</p>}
           </div>
         ) : <div className="empty">Scores appear here.</div>}
       </aside>

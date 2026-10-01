@@ -1,0 +1,14 @@
+.submit-grid { max-width: 1200px; margin: 0 auto; padding: 56px 28px 96px; display: grid; grid-template-columns: 5fr 6fr; gap: 72px; align-items: start; }
+.submit-side { position: sticky; top: 40px; }
+.rules { list-style: none; display: grid; gap: 0; }
+.rules li { display: grid; grid-template-columns: 40px 1fr; padding: 18px 0; border-top: 1px solid var(--line); color: #cfcbbf; }
+.rules li:last-child { border-bottom: 1px solid var(--line); }
+.rules b { color: var(--yellow); font-size: 20px; letter-spacing: -0.03em; }
+.submit-form { display: grid; gap: 26px; background: var(--surface); border: 1px solid var(--line); border-top: 6px solid var(--accent, var(--yellow)); border-radius: 16px; padding: 36px; transition: border-color .3s; }
+.drop { border: 1.5px dashed rgba(244, 241, 232, .3) !important; padding: 22px !important; cursor: pointer; }
+.drop::file-selector-button { background: var(--fg); color: #0b0b0a; border: 0; border-radius: 999px; padding: 8px 16px; margin-right: 14px; font: inherit; font-weight: 600; cursor: pointer; }
+@media (max-width: 900px) {
+  .submit-grid { grid-template-columns: 1fr; gap: 36px; padding-top: 32px; }
+  .submit-side { position: static; }
+  .submit-form { padding: 24px; }
+}
