@@ -61,19 +61,24 @@ export default function JudgeDesk() {
   const sub = subs.find((s) => s.id === selected) ?? null;
   const doneCount = subs.filter((s) => isDone(s.id)).length;
 
-  useEffect(() => {
-    if (!sub) return setPdfUrl(null);
-    setDraft({ ...(scores[sub.id] ?? {}) });
-    setNote(comments[sub.id] ?? "");
+  function pick(id: string) {
+    setSelected(id);
+    setDraft({ ...(scores[id] ?? {}) });
+    setNote(comments[id] ?? "");
     setMsg("");
     setPdfUrl(null);
+  }
+
+  useEffect(() => {
+    if (!selected) return;
+    const path = subs.find((s) => s.id === selected)?.deck_path;
+    if (!path) return;
     let live = true;
-    supabase.storage.from("decks").createSignedUrl(sub.deck_path, 3600).then(({ data }) => {
+    supabase.storage.from("decks").createSignedUrl(path, 3600).then(({ data }) => {
       if (live) setPdfUrl(data?.signedUrl ?? null);
     });
     return () => { live = false; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected]);
+  }, [selected, subs]);
 
   const pct = useMemo(() => {
     const filled = criteria.filter((c) => draft[c.id] !== undefined);
@@ -131,7 +136,7 @@ export default function JudgeDesk() {
           </div>
         </div>
         {visible.map((s, i) => (
-          <button key={s.id} className="card rise" style={{ ["--c" as string]: SDG_COLORS[s.sdg], animationDelay: `${Math.min(i, 12) * 30}ms` }} aria-current={s.id === selected} onClick={() => setSelected(s.id)}>
+          <button key={s.id} className="card rise" style={{ ["--c" as string]: SDG_COLORS[s.sdg], animationDelay: `${Math.min(i, 12) * 30}ms` }} aria-current={s.id === selected} onClick={() => pick(s.id)}>
             <div className="meta"><span>SDG {s.sdg}</span>{isDone(s.id) && <span className="done">✓ scored</span>}</div>
             <h3>{s.team_name}</h3>
             <div style={{ fontSize: 12, opacity: .8 }}>{s.title}</div>
