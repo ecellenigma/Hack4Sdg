@@ -1,5 +1,7 @@
 # Hack4SDG – Judging Platform
 
+**Live:** https://hack4sdg.vercel.app
+
 Homepage and online judging dashboard for **Hack for SDG – The Global Goals Hackathon**, an ideathon by AIESEC. The prelims are hosted at our college by E-Cell Enigma.
 
 ## About the event
