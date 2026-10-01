@@ -63,6 +63,7 @@ export default function JudgeDesk() {
   const doneCount = subs.filter((s) => isDone(s.id)).length;
 
   function pick(id: string) {
+    if (id === selected) return; // re-clicking the open entry would clear the deck without refetching
     setSelected(id);
     setDraft({ ...(scores[id] ?? {}) });
     setNote(comments[id] ?? "");
