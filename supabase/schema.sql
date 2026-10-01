@@ -129,3 +129,24 @@ create policy "anyone uploads decks" on storage.objects for insert to anon, auth
 create policy "judges read decks" on storage.objects for select to authenticated using (bucket_id = 'decks' and public.is_judge());
 create policy "admin deletes decks" on storage.objects for delete to authenticated using (bucket_id = 'decks' and public.is_admin());
 alter table public.submissions add constraint deck_path_format check (deck_path ~ '^[0-9a-f-]{36}\.pdf$');
+
+-- Pre-approve judges by email: when they sign up they're added to judges automatically.
+create table public.judge_invites (
+  email text primary key check (email = lower(email)),
+  name text not null,
+  is_admin boolean not null default false,
+  created_at timestamptz not null default now()
+);
+alter table public.judge_invites enable row level security;
+create policy "admin manages invites" on public.judge_invites for all to authenticated
+  using (public.is_admin()) with check (public.is_admin());
+create function public.apply_judge_invite() returns trigger language plpgsql security definer set search_path = '' as $$
+begin
+  insert into public.judges (user_id, name, is_admin)
+  select new.id, i.name, i.is_admin from public.judge_invites i where i.email = lower(new.email)
+  on conflict do nothing;
+  return new;
+end $$;
+revoke execute on function public.apply_judge_invite() from public, anon, authenticated;
+create trigger on_auth_user_created after insert on auth.users for each row execute function public.apply_judge_invite();
+-- Add a judge:  insert into public.judge_invites (email, name) values ('judge@example.com', 'Dr. Rao');

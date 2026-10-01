@@ -31,9 +31,6 @@ cp .env.example .env.local   # fill in Supabase URL/key + the four R2_* values
 npm install && npm run dev
 ```
 
-**Approving a judge:** they sign up at `/login`, then an admin runs
-`insert into judges (user_id, name, is_admin) select id, 'Name', false from auth.users where email = 'judge@example.com';`
-
-## Event flow
-
-Problem identification → Ideation → Solution development → Pitch → Evaluation → Final round
+**Approving a judge:** add their email before or after they sign up at `/login`:
+`insert into judge_invites (email, name, is_admin) values ('judge@example.com', 'Dr. Rao', false);`
+They're approved automatically on signup (emails lowercase).
