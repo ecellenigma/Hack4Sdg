@@ -26,9 +26,11 @@ export default function Submit() {
 
     setBusy(true);
     const id = crypto.randomUUID();
-    const path = `${id}.pdf`;
-    const up = await supabase.storage.from("decks").upload(path, file, { contentType: "application/pdf" });
-    if (up.error) { setBusy(false); return setErr(up.error.message); }
+    const signed = await fetch("/api/upload-url", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ size: file.size }) });
+    if (!signed.ok) { setBusy(false); return setErr((await signed.json().catch(() => null))?.error ?? "Could not start the upload."); }
+    const { key: path, url } = await signed.json();
+    const up = await fetch(url, { method: "PUT", headers: { "Content-Type": "application/pdf" }, body: file }).catch(() => null);
+    if (!up?.ok) { setBusy(false); return setErr("Upload failed. Check your connection and try again."); }
     const ins = await supabase.from("submissions").insert({
       id,
       team_name: String(f.get("team")).trim(),

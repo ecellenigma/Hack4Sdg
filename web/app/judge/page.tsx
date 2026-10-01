@@ -74,8 +74,10 @@ export default function JudgeDesk() {
     const path = subs.find((s) => s.id === selected)?.deck_path;
     if (!path) return;
     let live = true;
-    supabase.storage.from("decks").createSignedUrl(path, 3600).then(({ data }) => {
-      if (live) setPdfUrl(data?.signedUrl ?? null);
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      const r = await fetch(`/api/deck-url?path=${encodeURIComponent(path)}`, { headers: { Authorization: `Bearer ${session?.access_token}` } });
+      const j = r.ok ? await r.json() : null;
+      if (live) setPdfUrl(j?.url ?? null);
     });
     return () => { live = false; };
   }, [selected, subs]);

@@ -14,7 +14,7 @@ College students form teams (max 4), pick a problem statement aligned with the U
 ## Planned architecture
 
 - **Submissions:** teams submit via our own form (details plus a PDF deck) straight into Supabase.
-- **Storage:** PDFs in a private Supabase Storage bucket (1 GB free; R2 is the fallback).
+- **Storage:** PDFs in a private Cloudflare R2 bucket (10 GB free). Teams upload via a presigned URL from `/api/upload-url`; judges read via `/api/deck-url`, which checks their Supabase login first.
 - **Database:** Supabase Postgres with row-level security. Judges only see their own scores; only admins see the leaderboard.
 - **Frontend:** Next.js in `web/`.
 - **Dashboard:** reads submissions, shows the PDF viewer and a scoring form, and ranks teams live to pick the top 5.
@@ -27,7 +27,7 @@ Built: Supabase schema (`supabase/schema.sql`) and the judge dashboard (`web/`).
 
 ```bash
 cd web
-cp .env.example .env.local   # fill in the Supabase URL + publishable key
+cp .env.example .env.local   # fill in Supabase URL/key + the four R2_* values
 npm install && npm run dev
 ```
 
