@@ -1,15 +1,16 @@
 import Link from "next/link";
-import { PROBLEMS } from "@/lib/problems";
+import GoalExplorer from "./goal-explorer";
+import Mosaic from "./mosaic";
 import { SDG_COLORS, SDG_NAMES } from "@/lib/sdg";
 import "./home.css";
 
 const STEPS = [
-  ["01", "Form your team", "Up to 4 members."],
-  ["02", "Identify & innovate", "Pick a problem statement aligned with an SDG and come up with a solution."],
-  ["03", "Build your idea", "Make a presentation of your project and a way forward for its implementation."],
-  ["04", "Pitch it", "Present for 7–8 minutes."],
-  ["05", "Zero fees", "No registration fee for the prelims."],
-  ["06", "Make the finals", "The 5 best teams from the college go to the final round."],
+  ["Form your team", "Up to four people. Mix skills, not just friends."],
+  ["Pick a problem", "Choose a goal's problem statement, or bring your own under Student Innovation."],
+  ["Build the idea", "A presentation of your solution and a realistic way forward to implement it."],
+  ["Submit the deck", "Upload one PDF. It goes to the judges without your names on it."],
+  ["Get scored", "Judges rate every deck on five criteria. Zero registration fee."],
+  ["Reach the finals", "The five best teams from the college go on to the final round and pitch for 7–8 minutes."],
 ];
 
 const CRITERIA = [
@@ -20,59 +21,111 @@ const CRITERIA = [
   "Sustainability & Viability",
 ];
 
+const NAMES = Object.values(SDG_NAMES).slice(0, 17);
+const COLORS = Object.values(SDG_COLORS);
+
 export default function Home() {
   return (
-    <main className="home">
+    <div className="h">
+      <nav className="nav">
+        <Link href="/" className="brand" aria-label="Hack for SDG">
+          <span className="logo" aria-hidden>{COLORS.slice(0, 9).map((c) => <i key={c} style={{ background: c }} />)}</span>
+          Hack for SDG
+        </Link>
+        <div className="nav-links">
+          <a href="#goals">Goals</a>
+          <a href="#journey">Journey</a>
+          <a href="#judging">Judging</a>
+          <Link href="/submit" className="pill">Submit idea</Link>
+        </div>
+      </nav>
+
       <header className="hero">
-        <p className="label rise">AIESEC × E-Cell Enigma · Prelims</p>
-        <h1 className="rise" style={{ animationDelay: "80ms" }}>
-          Hack <em>for</em> SDG
+        <p className="eyebrow">AIESEC × E-Cell Enigma · The Global Goals Hackathon</p>
+        <h1>
+          <span>Eighteen goals.</span>
+          <span>One idea <em>of yours.</em></span>
         </h1>
-        <p className="lede rise" style={{ animationDelay: "160ms" }}>
-          The Global Goals Hackathon. Find a real-world problem tied to the UN Sustainable Development Goals, and pitch a
-          solution that can create meaningful social impact.
+        <p className="sub">
+          Hack for SDG is an ideathon for college students. Pick a real-world problem tied to the UN&apos;s Sustainable
+          Development Goals and pitch a solution that makes a difference.
         </p>
-        <div className="cta rise" style={{ animationDelay: "240ms" }}>
-          <Link className="btn" href="/submit">Submit your idea →</Link>
-          <a className="btn ghost" href="#goals">See the problems</a>
+        <div className="hero-cta">
+          <Link href="/submit" className="big">Submit your idea <span aria-hidden>→</span></Link>
+          <a href="#goals" className="link">Browse the problems ↓</a>
         </div>
-        <div className="stripe" aria-hidden>
-          {Object.entries(SDG_COLORS).slice(0, 17).map(([n, c]) => <span key={n} style={{ background: c }} />)}
-        </div>
+        <Mosaic />
+        <dl className="facts">
+          <div><dt>0</dt><dd>registration fee</dd></div>
+          <div><dt>4</dt><dd>members per team</dd></div>
+          <div><dt>7–8</dt><dd>minute pitch</dd></div>
+          <div><dt>5</dt><dd>teams reach the finals</dd></div>
+        </dl>
       </header>
 
-      <section id="goals">
-        <h2>Pick a goal. Or bring your own.</h2>
-        <div className="grid">
-          {Object.entries(PROBLEMS).map(([n, text], i) => (
-            <article key={n} className="tile rise" style={{ ["--c" as string]: SDG_COLORS[+n], animationDelay: `${i * 25}ms` }}>
-              <span className="num">{n}</span>
-              <h3>{+n === 18 ? "Student innovation" : SDG_NAMES[+n]}</h3>
-              <p>{text}</p>
-            </article>
+      <div className="marquee" aria-hidden>
+        <div>
+          {[...NAMES, ...NAMES].map((t, i) => (
+            <span key={i}><i style={{ background: COLORS[i % 17] }} />{t}</span>
           ))}
+        </div>
+      </div>
+
+      <section id="goals" className="goals">
+        <div className="wrap">
+          <p className="kicker">The problems</p>
+          <h2>Pick a goal. <em>Or bring your own.</em></h2>
+          <GoalExplorer />
         </div>
       </section>
 
-      <section>
-        <h2>How it works</h2>
-        <ol className="steps">
-          {STEPS.map(([n, t, d]) => (
-            <li key={n}><span className="label">{n}</span><h3>{t}</h3><p>{d}</p></li>
-          ))}
-        </ol>
+      <section id="journey" className="journey">
+        <div className="wrap">
+          <p className="kicker">The journey</p>
+          <h2>From a hunch to the <em>final round.</em></h2>
+          <ol>
+            {STEPS.map(([t, d], i) => (
+              <li key={t} style={{ ["--c" as string]: COLORS[(i * 3) % 17] }}>
+                <span className="step-n">{String(i + 1).padStart(2, "0")}</span>
+                <h3>{t}</h3>
+                <p>{d}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
 
-      <section className="judging">
-        <h2>How you&apos;re judged</h2>
-        <p>Judging is blind. Judges see only your presentation, never team names or colleges. Keep names and logos off your slides.</p>
-        <ul>{CRITERIA.map((c, i) => <li key={c}><span>{i + 1}</span>{c}</li>)}</ul>
+      <section id="judging" className="judging">
+        <div className="wrap split">
+          <div>
+            <p className="kicker">The judging</p>
+            <h2>Blind by <em>design.</em></h2>
+            <p className="lead">
+              Judges see your deck and nothing else: no team name, no college, no faces. Each entry is just a number,
+              so the idea is all that gets scored. Keep names and logos off your slides.
+            </p>
+            <span className="stamp">Anonymous entries</span>
+          </div>
+          <ol className="crit">
+            {CRITERIA.map((c, i) => (
+              <li key={c}><b>{i + 1}</b><span>{c}</span><em>/10</em></li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className="finale">
+        <div className="bands" aria-hidden>{COLORS.slice(0, 17).map((c) => <i key={c} style={{ background: c }} />)}</div>
+        <div className="wrap">
+          <h2>Got an idea worth <em>pitching?</em></h2>
+          <Link href="/submit" className="big">Submit your idea <span aria-hidden>→</span></Link>
+        </div>
       </section>
 
       <footer className="foot">
-        <Link className="btn" href="/submit">Submit your idea →</Link>
-        <Link href="/judge" className="label">Judges: sign in</Link>
+        <span>© Hack for SDG · AIESEC × E-Cell Enigma</span>
+        <Link href="/judge">Judges sign in</Link>
       </footer>
-    </main>
+    </div>
   );
 }

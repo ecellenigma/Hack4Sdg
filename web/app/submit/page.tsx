@@ -1,13 +1,15 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { SDG_COLORS, SDG_NAMES } from "@/lib/sdg";
 
 const MAX_BYTES = 15 * 1024 * 1024;
 
-export default function Submit() {
-  const [sdg, setSdg] = useState(0);
+function SubmitForm() {
+  const preset = Number(useSearchParams().get("sdg")) || 0;
+  const [sdg, setSdg] = useState(preset >= 1 && preset <= 18 ? preset : 0);
   const [members, setMembers] = useState(["", "", "", ""]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
@@ -120,5 +122,13 @@ export default function Submit() {
         <button className="btn" disabled={busy}>{busy ? "Uploading…" : "Submit"}</button>
       </form>
     </main>
+  );
+}
+
+export default function Submit() {
+  return (
+    <Suspense>
+      <SubmitForm />
+    </Suspense>
   );
 }

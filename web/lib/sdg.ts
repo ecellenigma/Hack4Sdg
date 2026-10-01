@@ -15,3 +15,10 @@ export const SDG_NAMES: Record<number, string> = {
   16: "Peace, Justice & Strong Institutions", 17: "Partnerships for the Goals",
   18: "Student Innovation",
 };
+
+/** Readable text colour (dark or white) on top of an SDG colour. */
+export function onColor(hex: string): string {
+  const n = parseInt(hex.slice(1), 16);
+  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.6 ? "#0b0b0a" : "#ffffff";
+}
