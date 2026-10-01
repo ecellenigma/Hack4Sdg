@@ -150,3 +150,14 @@ end $$;
 revoke execute on function public.apply_judge_invite() from public, anon, authenticated;
 create trigger on_auth_user_created after insert on auth.users for each row execute function public.apply_judge_invite();
 -- Add a judge:  insert into public.judge_invites (email, name) values ('judge@example.com', 'Dr. Rao');
+
+-- Team lead phone (judges can't read it; admins get it via submission_identities())
+alter table public.submissions add column contact_phone text check (contact_phone is null or contact_phone ~ '^\+?[0-9 ()-]{7,20}$');
+drop function public.submission_identities();
+create function public.submission_identities()
+returns table (id uuid, number integer, team_name text, members jsonb, contact_email text, contact_phone text)
+language sql stable security definer set search_path = '' as $$
+  select s.id, s.number, s.team_name, s.members, s.contact_email, s.contact_phone
+  from public.submissions s where public.is_admin() order by s.number; $$;
+revoke execute on function public.submission_identities() from public, anon;
+grant execute on function public.submission_identities() to authenticated;

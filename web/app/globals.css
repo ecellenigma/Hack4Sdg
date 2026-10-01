@@ -39,7 +39,7 @@ em { font-family: var(--s); font-style: italic; font-weight: 400; letter-spacing
 .btn.ghost:hover:not(:disabled) { border-color: var(--fg); background: transparent; box-shadow: none; }
 .btn.small { padding: 8px 16px; font-size: 14px; }
 
-input[type=text], input[type=email], input[type=password], textarea, select {
+input[type=text], input[type=email], input[type=tel], input[type=password], textarea, select {
   width: 100%; background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 10px;
   padding: 13px 14px; font: inherit; transition: border-color .15s, box-shadow .15s;
 }

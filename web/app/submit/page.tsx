@@ -47,6 +47,7 @@ function SubmitForm() {
       team_name: String(f.get("team")).trim(),
       members: names,
       contact_email: String(f.get("email")).trim(),
+      contact_phone: String(f.get("phone")).trim(),
       sdg,
       title: String(f.get("title")).trim(),
       summary: String(f.get("summary")).trim() || null,
@@ -105,14 +106,20 @@ function SubmitForm() {
           <fieldset style={{ border: 0, display: "grid", gap: 8 }}>
             <legend className="label" style={{ marginBottom: 8 }}>Members (up to 4)</legend>
             {members.map((m, i) => (
-              <input key={i} type="text" aria-label={`Member ${i + 1}`} placeholder={`Member ${i + 1}${i ? " (optional)" : ""}`} value={m} maxLength={80}
+              <input key={i} type="text" aria-label={`Member ${i + 1}`} placeholder={i === 0 ? "Member 1 (team lead)" : `Member ${i + 1} (optional)`} value={m} maxLength={80}
                 onChange={(e) => setMembers((p) => p.map((v, j) => (j === i ? e.target.value : v)))} />
             ))}
           </fieldset>
 
-          <div style={field}>
-            <label className="label" htmlFor="email">Contact email</label>
-            <input id="email" name="email" type="email" required />
+          <div className="two">
+            <div style={field}>
+              <label className="label" htmlFor="email">Team lead email</label>
+              <input id="email" name="email" type="email" required autoComplete="email" />
+            </div>
+            <div style={field}>
+              <label className="label" htmlFor="phone">Team lead phone</label>
+              <input id="phone" name="phone" type="tel" required autoComplete="tel" placeholder="+91 98765 43210" pattern="\+?[0-9 ()\-]{7,20}" title="Digits, spaces and + only, 7 to 20 characters" />
+            </div>
           </div>
 
           <div style={field}>
