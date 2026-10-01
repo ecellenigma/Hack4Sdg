@@ -1,9 +1,9 @@
 .desk { display: grid; grid-template-columns: 320px 1fr 340px; height: 100vh; }
 .desk > * { min-height: 0; }
-.col { overflow-y: auto; border-right: 2px solid var(--ink); background: var(--paper); }
+.col { overflow-y: auto; overflow-x: hidden; border-right: 2px solid var(--ink); background: var(--paper); }
 .top { padding: 20px; border-bottom: 2px solid var(--ink); position: sticky; top: 0; background: var(--paper); z-index: 2; }
-.filters { display: flex; gap: 8px; margin-top: 12px; }
-.filters select { flex: 1; border: 2px solid var(--ink); background: #fbf9f2; padding: 6px; font: inherit; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.filters select { flex: 1; min-width: 0; border: 2px solid var(--ink); background: #fbf9f2; padding: 6px; font: inherit; }
 .card { display: block; width: 100%; text-align: left; border: 0; border-bottom: 1px solid var(--ink); background: transparent; padding: 14px 20px 14px 24px; position: relative; }
 .card:hover { background: var(--paper-2); }
 .card[aria-current=true] { background: var(--ink); color: var(--paper); }
