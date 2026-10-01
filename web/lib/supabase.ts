@@ -7,9 +7,7 @@ export const supabase = createClient(
 
 export type Submission = {
   id: string;
-  team_name: string;
-  members: string[];
-  contact_email: string;
+  number: number;
   sdg: number;
   title: string;
   summary: string | null;

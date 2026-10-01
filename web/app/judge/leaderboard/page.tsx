@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { SDG_COLORS } from "@/lib/sdg";
 
-type Row = { submission_id: string; team_name: string; title: string; sdg: number; judges_scored: number; score_pct: number | null };
+type Row = { submission_id: string; number: number; team_name: string; title: string; sdg: number; judges_scored: number; score_pct: number | null };
 
 export default function Leaderboard() {
   const router = useRouter();
@@ -35,7 +35,7 @@ export default function Leaderboard() {
             <span style={{ fontFamily: "var(--display)", fontSize: 40 }}>{i + 1}</span>
             <div style={{ borderLeft: `8px solid ${SDG_COLORS[r.sdg]}`, paddingLeft: 12 }}>
               <h2 style={{ fontSize: 24 }}>{r.team_name}</h2>
-              <p className="label">SDG {r.sdg} · {r.title} · {r.judges_scored} judge{r.judges_scored === 1 ? "" : "s"}</p>
+              <p className="label">Entry {String(r.number).padStart(3, "0")} · SDG {r.sdg} · {r.title} · {r.judges_scored} judge{r.judges_scored === 1 ? "" : "s"}</p>
             </div>
             <span style={{ fontFamily: "var(--display)", fontSize: 32 }}>{r.score_pct ?? "–"}{r.score_pct !== null && "%"}</span>
           </li>

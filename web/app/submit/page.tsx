@@ -61,7 +61,7 @@ export default function Submit() {
     <main style={{ maxWidth: 680, margin: "0 auto", padding: "48px 24px 96px" }}>
       <Link href="/" className="label">← Hack for SDG</Link>
       <h1 className="rise" style={{ fontSize: "clamp(44px, 8vw, 80px)", margin: "8px 0 8px" }}>Submit your idea</h1>
-      <p style={{ color: "var(--ink-soft)", marginBottom: 32 }}>One submission per team (max 4 members). Upload your presentation as a PDF, 15 MB or less.</p>
+      <p style={{ color: "var(--ink-soft)", marginBottom: 32 }}>One submission per team (max 4 members). Upload your presentation as a PDF, 15 MB or less. Judging is blind: judges never see team names, so leave your names, college and logos off the slides.</p>
 
       <form onSubmit={onSubmit} style={{ display: "grid", gap: 24 }}>
         <div style={field}>

@@ -8,6 +8,7 @@ create table public.judges (
 
 create table public.submissions (
   id uuid primary key default gen_random_uuid(),
+  number integer generated always as identity unique,
   team_name text not null check (char_length(team_name) between 1 and 100),
   members jsonb not null default '[]'::jsonb,
   contact_email text not null,
@@ -27,8 +28,9 @@ create table public.criteria (
 );
 
 insert into public.criteria (label, weight, max_score, position) values
-  ('Problem clarity & SDG alignment', 1, 10, 1), ('Innovation', 1, 10, 2),
-  ('Feasibility', 1, 10, 3), ('Impact', 1, 10, 4), ('Presentation', 1, 10, 5);
+  ('SDG Relevance & Problem Identification', 1, 10, 1), ('Innovation & Originality', 1, 10, 2),
+  ('Social & Environmental Impact', 1, 10, 3), ('Feasibility & Scalability', 1, 10, 4),
+  ('Sustainability & Viability', 1, 10, 5);
 
 create table public.scores (
   judge_id uuid not null references public.judges(user_id) on delete cascade,
@@ -65,7 +67,7 @@ create trigger scores_check before insert or update on public.scores
 
 -- Admin-only leaderboard: weighted % per judge, averaged across judges.
 create function public.leaderboard()
-returns table (submission_id uuid, team_name text, title text, sdg smallint, judges_scored bigint, score_pct numeric)
+returns table (submission_id uuid, number integer, team_name text, title text, sdg smallint, judges_scored bigint, score_pct numeric)
 language sql stable security definer set search_path = '' as $$
   with per_judge as (
     select s.submission_id, s.judge_id,
@@ -73,7 +75,7 @@ language sql stable security definer set search_path = '' as $$
     from public.scores s join public.criteria c on c.id = s.criterion_id
     group by s.submission_id, s.judge_id
   )
-  select sub.id, sub.team_name, sub.title, sub.sdg, count(p.judge_id), round(avg(p.pct), 2)
+  select sub.id, sub.number, sub.team_name, sub.title, sub.sdg, count(p.judge_id), round(avg(p.pct), 2)
   from public.submissions sub left join per_judge p on p.submission_id = sub.id
   where public.is_admin()
   group by sub.id order by avg(p.pct) desc nulls last;
@@ -103,6 +105,17 @@ create policy "judge deletes own scores" on public.scores for delete to authenti
 create policy "judge reads own comments" on public.comments for select to authenticated using (judge_id = (select auth.uid()) or public.is_admin());
 create policy "judge writes own comments" on public.comments for insert to authenticated with check (judge_id = (select auth.uid()) and public.is_judge());
 create policy "judge edits own comments" on public.comments for update to authenticated using (judge_id = (select auth.uid())) with check (judge_id = (select auth.uid()));
+
+-- Blind judging: judges can read only non-identifying columns.
+revoke select on public.submissions from authenticated, anon;
+grant select (id, number, sdg, title, summary, deck_path, created_at) on public.submissions to authenticated;
+create function public.submission_identities()
+returns table (id uuid, number integer, team_name text, members jsonb, contact_email text)
+language sql stable security definer set search_path = '' as $$
+  select s.id, s.number, s.team_name, s.members, s.contact_email
+  from public.submissions s where public.is_admin() order by s.number; $$;
+revoke execute on function public.submission_identities() from public, anon;
+grant execute on function public.submission_identities() to authenticated;
 
 create index on public.scores (submission_id);
 create index on public.submissions (sdg);

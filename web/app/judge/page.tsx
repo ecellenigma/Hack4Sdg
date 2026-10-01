@@ -34,7 +34,7 @@ export default function JudgeDesk() {
       if (!j) return setState("denied");
       setJudge(j);
       const [s, c, sc, cm] = await Promise.all([
-        supabase.from("submissions").select("*").order("created_at"),
+        supabase.from("submissions").select("id,number,sdg,title,summary,deck_path,created_at").order("number"),
         supabase.from("criteria").select("*").order("position"),
         supabase.from("scores").select("submission_id,criterion_id,value").eq("judge_id", uid),
         supabase.from("comments").select("submission_id,body").eq("judge_id", uid),
@@ -138,7 +138,7 @@ export default function JudgeDesk() {
         {visible.map((s, i) => (
           <button key={s.id} className="card rise" style={{ ["--c" as string]: SDG_COLORS[s.sdg], animationDelay: `${Math.min(i, 12) * 30}ms` }} aria-current={s.id === selected} onClick={() => pick(s.id)}>
             <div className="meta"><span>SDG {s.sdg}</span>{isDone(s.id) && <span className="done">✓ scored</span>}</div>
-            <h3>{s.team_name}</h3>
+            <h3>Entry {String(s.number).padStart(3, "0")}</h3>
             <div style={{ fontSize: 12, opacity: .8 }}>{s.title}</div>
           </button>
         ))}
@@ -150,12 +150,11 @@ export default function JudgeDesk() {
           <>
             <div className="stage-head">
               <span className="chip">SDG {sub.sdg} · {SDG_NAMES[sub.sdg]}</span>
-              <h2>{sub.team_name}</h2>
+              <h2>Entry {String(sub.number).padStart(3, "0")}</h2>
               <p><strong>{sub.title}</strong></p>
               {sub.summary && <p style={{ color: "var(--ink-soft)", marginTop: 4 }}>{sub.summary}</p>}
-              <p className="label" style={{ marginTop: 8 }}>{sub.members.join(" · ")}</p>
             </div>
-            {pdfUrl ? <iframe src={pdfUrl} title={`${sub.team_name} deck`} /> : <div className="empty">Loading deck…</div>}
+            {pdfUrl ? <iframe src={pdfUrl} title={`Entry ${sub.number} deck`} /> : <div className="empty">Loading deck…</div>}
           </>
         ) : <div className="empty">Pick a team on the left to start judging.</div>}
       </section>
