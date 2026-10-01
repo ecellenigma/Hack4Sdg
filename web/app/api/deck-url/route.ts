@@ -1,7 +1,7 @@
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { createClient } from "@supabase/supabase-js";
-import { R2_BUCKET, r2 } from "@/lib/r2";
+import { R2_BUCKET, r2, r2Configured } from "@/lib/r2";
 
 // Judges only: verifies the caller's Supabase session, then signs a short-lived read URL.
 export async function GET(req: Request) {
@@ -13,8 +13,14 @@ export async function GET(req: Request) {
   const db = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, {
     global: { headers: { Authorization: `Bearer ${token}` } },
   });
-  const { data } = await db.from("submissions").select("id").eq("deck_path", path).maybeSingle();
+  const { data } = await db.from("submissions").select("id,deck_store").eq("deck_path", path).maybeSingle();
   if (!data) return Response.json({ error: "Forbidden" }, { status: 403 });
+
+  if (data.deck_store === "supabase") {
+    const { data: signed } = await db.storage.from("decks").createSignedUrl(path, 3600);
+    return signed ? Response.json({ url: signed.signedUrl }) : Response.json({ error: "Deck not found" }, { status: 404 });
+  }
+  if (!r2Configured) return Response.json({ error: "Storage not configured" }, { status: 503 });
 
   const url = await getSignedUrl(
     r2,

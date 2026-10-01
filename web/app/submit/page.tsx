@@ -28,9 +28,16 @@ export default function Submit() {
     const id = crypto.randomUUID();
     const signed = await fetch("/api/upload-url", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ size: file.size }) });
     if (!signed.ok) { setBusy(false); return setErr((await signed.json().catch(() => null))?.error ?? "Could not start the upload."); }
-    const { key: path, url } = await signed.json();
-    const up = await fetch(url, { method: "PUT", headers: { "Content-Type": "application/pdf" }, body: file }).catch(() => null);
-    if (!up?.ok) { setBusy(false); return setErr("Upload failed. Check your connection and try again."); }
+    const { store: planned, key: path, url } = await signed.json();
+    let store: "r2" | "supabase" = planned;
+    if (planned === "r2") {
+      const up = await fetch(url, { method: "PUT", headers: { "Content-Type": "application/pdf" }, body: file }).catch(() => null);
+      if (!up?.ok) store = "supabase"; // R2 unreachable: fall back
+    }
+    if (store === "supabase") {
+      const up = await supabase.storage.from("decks").upload(path, file, { contentType: "application/pdf" });
+      if (up.error) { setBusy(false); return setErr("Upload failed. Check your connection and try again."); }
+    }
     const ins = await supabase.from("submissions").insert({
       id,
       team_name: String(f.get("team")).trim(),
@@ -40,6 +47,7 @@ export default function Submit() {
       title: String(f.get("title")).trim(),
       summary: String(f.get("summary")).trim() || null,
       deck_path: path,
+      deck_store: store,
     });
     setBusy(false);
     if (ins.error) return setErr(ins.error.message);
