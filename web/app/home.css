@@ -237,3 +237,6 @@
 @media (max-width: 480px) { .brandbar { gap: 14px; } }
 
 .brandbar .x { color: var(--mute); font-size: 20px; line-height: 1; }
+.foot-logos { flex-basis: 100%; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 20px 40px; border-bottom: 1px solid var(--line); padding: 4px 0 28px; margin-bottom: 8px; }
+.foot-logos img { height: 56px; width: auto; }
+@media (max-width: 560px) { .foot-logos img { height: 38px; } .foot-logos { gap: 14px 22px; } }

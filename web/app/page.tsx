@@ -206,6 +206,12 @@ export default function Home() {
       </section>
 
       <footer className="foot">
+        <div className="foot-logos">
+          <Image src="/aicte.png" alt="AICTE" width={316} height={316} />
+          <Image src="/aicte-idea-lab.png" alt="AICTE IDEA Lab" width={509} height={491} />
+          <Image src="/enigma-cdc.png" alt="E-Cell Enigma, supported by the Career Development Centre" width={395} height={218} />
+          <Image src="/aiesec.png" alt="AIESEC" width={1265} height={259} />
+        </div>
         <span>© Hack for SDG · AIESEC × E-Cell Enigma</span>
         <Link href="/judge">Judges sign in</Link>
       </footer>
