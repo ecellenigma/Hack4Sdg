@@ -8,9 +8,9 @@ const STEPS = [
   ["Form your team", "Up to four people. Mix skills, not just friends."],
   ["Pick a problem", "Choose a goal's problem statement, or bring your own under Student Innovation."],
   ["Build the idea", "A presentation of your solution and a realistic way forward to implement it."],
-  ["Submit the deck", "Upload one PDF. It goes to the judges without your names on it."],
+  ["Submit the deck", "Upload one PDF by 10 October. It goes to the judges without your names on it."],
   ["Get scored", "Judges rate every deck on five criteria. Zero registration fee."],
-  ["Reach the finals", "The five best teams from the college go on to the final round and pitch for 7–8 minutes."],
+  ["Reach the finals", "The ten best teams go on to the offline final round on 17 October and pitch for 7–8 minutes."],
 ];
 
 const CRITERIA = [
@@ -50,6 +50,10 @@ export default function Home() {
           Hack for SDG is an ideathon for college students. Pick a real-world problem tied to the UN&apos;s Sustainable
           Development Goals and pitch a solution that makes a difference.
         </p>
+        <p className="dates">
+          <span><b>10 Oct</b> Round 1 submissions close</span>
+          <span><b>17 Oct</b> Offline final round</span>
+        </p>
         <div className="hero-cta">
           <Link href="/submit" className="big">Submit your idea <span aria-hidden>→</span></Link>
           <a href="#goals" className="link">Browse the problems ↓</a>
@@ -59,7 +63,7 @@ export default function Home() {
           <div><dt>0</dt><dd>registration fee</dd></div>
           <div><dt>4</dt><dd>members per team</dd></div>
           <div><dt>7–8</dt><dd>minute pitch</dd></div>
-          <div><dt>5</dt><dd>teams reach the finals</dd></div>
+          <div><dt>10</dt><dd>teams reach the finals</dd></div>
         </dl>
       </header>
 

@@ -7,7 +7,7 @@ import AppBar, { Stripe } from "../../appbar";
 
 type Row = { submission_id: string; number: number; team_name: string; title: string; sdg: number; judges_scored: number; score_pct: number | null };
 
-const FINALISTS = 5;
+const FINALISTS = 10;
 
 export default function Leaderboard() {
   const router = useRouter();

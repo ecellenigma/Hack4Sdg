@@ -34,6 +34,8 @@
 .hero h1 span:nth-child(2) { animation-delay: .12s; }
 .hero h1 em { color: #FCC30B; padding-right: .05em; }
 .sub { max-width: 52ch; font-size: clamp(17px, 1.6vw, 21px); color: #cfcbbf; margin: 36px 0 32px; }
+.dates { display: flex; flex-wrap: wrap; gap: 10px 32px; margin-bottom: 32px; color: var(--mute); font-size: 15px; }
+.dates b { color: #FCC30B; font-weight: 700; margin-right: 8px; }
 .hero-cta { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; margin-bottom: 56px; }
 .big { display: inline-flex; gap: 14px; align-items: center; background: #FCC30B; color: var(--ink); text-decoration: none; font-weight: 700; font-size: 20px; letter-spacing: -0.02em; padding: 18px 30px; border-radius: 999px; transition: transform .2s, box-shadow .2s, background .2s; }
 .big span { transition: transform .2s; }
