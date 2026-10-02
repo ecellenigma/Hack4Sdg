@@ -36,6 +36,7 @@
 .sub { max-width: 52ch; font-size: clamp(17px, 1.6vw, 21px); color: #cfcbbf; margin: 28px 0; }
 .dates { display: flex; flex-wrap: wrap; gap: 10px 32px; margin-bottom: 28px; color: var(--mute); font-size: 15px; }
 .dates b { color: #FCC30B; font-weight: 700; margin-right: 8px; }
+.count b { margin: 0 0 0 6px; color: var(--fg); font-variant-numeric: tabular-nums; }
 .hero-cta { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; margin-bottom: 44px; }
 .big { display: inline-flex; gap: 14px; align-items: center; background: #FCC30B; color: var(--ink); text-decoration: none; font-weight: 700; font-size: 20px; letter-spacing: -0.02em; padding: 18px 30px; border-radius: 999px; transition: transform .2s, box-shadow .2s, background .2s; }
 .big span { transition: transform .2s; }
@@ -65,8 +66,8 @@
 
 /* sections */
 .kicker { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 18px; }
-.goals, .journey, .judging, .finale { padding: 120px 0; }
-.goals h2, .journey h2, .judging h2, .finale h2 { font-size: clamp(44px, 7vw, 104px); margin-bottom: 56px; max-width: 14ch; }
+.goals, .journey, .judging, .finale, .event, .faq, .finalists { padding: 120px 0; }
+.goals h2, .journey h2, .judging h2, .finale h2, .event h2, .faq h2, .finalists h2 { font-size: clamp(44px, 7vw, 104px); margin-bottom: 56px; max-width: 14ch; }
 .goals { background: var(--cream); color: var(--ink); }
 .goals .kicker { color: #6b675b; }
 .goals h2 em { color: #e5381f; }
@@ -115,6 +116,44 @@
 .crit b { font-size: 15px; color: var(--mute); font-weight: 500; }
 .crit em { color: var(--mute); font-size: 20px; }
 
+/* event */
+.event { background: var(--cream); color: var(--ink); }
+.event h2 em { color: #DD1367; }
+.rounds { display: grid; grid-template-columns: 1fr 1fr; border: 2px solid var(--ink); }
+.rounds article { padding: 36px; display: grid; gap: 14px; align-content: start; }
+.rounds article + article { border-left: 2px solid var(--ink); }
+.round-tag { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; }
+.rounds h3 { font-size: clamp(36px, 5vw, 68px); }
+.rounds p:not(.round-tag) { font-size: 19px; max-width: 30ch; }
+.rounds a { font-weight: 700; justify-self: start; margin-top: 8px; }
+.info { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0 32px; margin-top: 40px; }
+.info div { border-top: 2px solid var(--ink); padding: 14px 0 24px; }
+.info dt { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; opacity: .7; margin-bottom: 6px; }
+.info dd { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
+
+/* faq */
+.faq { background: var(--bg); }
+.faq .kicker { color: var(--mute); }
+.faq h2 em { color: #FD9D24; }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq details:first-child { border-top: 1px solid var(--line); }
+.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 24px; padding: 22px 0; font-size: clamp(18px, 1.8vw, 22px); font-weight: 500; letter-spacing: -0.02em; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; color: #FD9D24; font-weight: 700; transition: transform .2s; }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq summary:hover { color: #FD9D24; }
+.faq details p { color: #b5b1a5; max-width: 52ch; padding-bottom: 24px; }
+
+/* finalists: only rendered once the results are published */
+.finalists { background: #15140f; border-bottom: 1px solid var(--line); }
+.finalists .kicker { color: var(--mute); }
+.finalists h2 em { color: #FCC30B; }
+.finalists ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
+.finalists li { display: grid; grid-template-columns: 48px 1fr; gap: 18px; align-items: center; padding: 18px 0; border-top: 1px solid var(--line); }
+.finalists li b { display: grid; place-items: center; aspect-ratio: 1; border-radius: 4px; font-size: 18px; }
+.finalists h3 { font-size: 24px; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 4px; }
+.finalists p { color: #b5b1a5; font-size: 15px; }
+
 /* finale */
 .finale { background: var(--bg); position: relative; text-align: center; padding-top: 160px; }
 .finale .wrap { display: grid; justify-items: center; }
@@ -134,7 +173,7 @@
 /* scroll reveal: CSS only, so browsers without scroll timelines just show the content */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .goals h2, .journey h2, .judging h2, .finale h2, .explorer, .journey li, .crit li, .lead {
+    .goals h2, .journey h2, .judging h2, .finale h2, .event h2, .faq h2, .explorer, .journey li, .crit li, .lead, .rounds, .info, .faq details {
       animation: reveal linear both; animation-timeline: view(); animation-range: entry 0% entry 45%;
     }
   }
@@ -163,7 +202,10 @@
   .journey li { padding-right: 24px; }
   .journey ol { grid-template-columns: 1fr 1fr; }
   .split { grid-template-columns: 1fr; gap: 40px; }
-  .goals, .journey, .judging { padding: 80px 0; }
+  .goals, .journey, .judging, .event, .faq, .finalists { padding: 80px 0; }
+  .rounds, .finalists ul { grid-template-columns: 1fr; }
+  .rounds article { padding: 28px; }
+  .rounds article + article { border-left: 0; border-top: 2px solid var(--ink); }
 }
 @media (max-width: 560px) {
   .journey ol { grid-template-columns: 1fr; gap: 48px 0; }

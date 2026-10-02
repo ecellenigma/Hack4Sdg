@@ -161,3 +161,59 @@ language sql stable security definer set search_path = '' as $$
   from public.submissions s where public.is_admin() order by s.number; $$;
 revoke execute on function public.submission_identities() from public, anon;
 grant execute on function public.submission_identities() to authenticated;
+
+-- Migration "event_settings_receipts_finalists": deadline enforced on insert, private receipt
+-- links that let a team replace its deck, and finalists the admin can publish on the homepage.
+create table public.event_settings (
+  id boolean primary key default true check (id), -- single row
+  submissions_close timestamptz not null,
+  finalists smallint not null default 10 check (finalists > 0),
+  results_published boolean not null default false
+);
+insert into public.event_settings (submissions_close) values ('2026-10-10 23:59:59+05:30');
+alter table public.event_settings enable row level security;
+create policy "anyone reads settings" on public.event_settings for select to anon, authenticated using (true);
+create policy "admin edits settings" on public.event_settings for update to authenticated using (public.is_admin()) with check (public.is_admin());
+
+drop policy "anyone can submit" on public.submissions;
+create policy "anyone can submit before the deadline" on public.submissions for insert to anon, authenticated
+  with check (now() <= (select submissions_close from public.event_settings));
+
+-- The team keeps (id, edit_token) as a private link. Nobody can read the token back.
+alter table public.submissions add column edit_token uuid;
+
+create function public.submission_receipt(p_id uuid, p_token uuid)
+returns table (number integer, team_name text, title text, sdg smallint, created_at timestamptz, editable boolean)
+language sql stable security definer set search_path = '' as $$
+  select s.number, s.team_name, s.title, s.sdg, s.created_at, now() <= (select e.submissions_close from public.event_settings e)
+  from public.submissions s where s.id = p_id and s.edit_token = p_token; $$;
+
+create function public.replace_deck(p_id uuid, p_token uuid, p_path text, p_store text)
+returns boolean language plpgsql security definer set search_path = '' as $$
+begin
+  if now() > (select e.submissions_close from public.event_settings e) then
+    raise exception 'Submissions are closed';
+  end if;
+  update public.submissions set deck_path = p_path, deck_store = p_store where id = p_id and edit_token = p_token;
+  return found;
+end $$;
+
+-- Public once published: the top entries by the same score as leaderboard(), listed by entry number, not rank.
+create function public.finalists()
+returns table (number integer, team_name text, title text, sdg smallint)
+language sql stable security definer set search_path = '' as $$
+  with per_judge as (
+    select s.submission_id, s.judge_id,
+           sum(s.value / c.max_score * c.weight) / sum(c.weight) * 100 as pct
+    from public.scores s join public.criteria c on c.id = s.criterion_id
+    group by s.submission_id, s.judge_id
+  ), ranked as (
+    select sub.number, sub.team_name, sub.title, sub.sdg
+    from public.submissions sub join per_judge p on p.submission_id = sub.id
+    group by sub.id order by avg(p.pct) desc, sub.number
+    limit (select e.finalists from public.event_settings e)
+  )
+  select r.number, r.team_name, r.title, r.sdg from ranked r
+  where (select e.results_published from public.event_settings e) order by r.number;
+$$;
+grant execute on function public.submission_receipt(uuid, uuid), public.replace_deck(uuid, uuid, text, text), public.finalists() to anon, authenticated;

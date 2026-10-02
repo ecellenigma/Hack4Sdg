@@ -1,14 +1,18 @@
 "use client";
 import "./submit.css";
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useRef, useState, useSyncExternalStore } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { PROBLEMS } from "@/lib/problems";
 import { SDG_COLORS, SDG_NAMES, onColor } from "@/lib/sdg";
+import { DEADLINE_LABEL, FINALS_LABEL } from "@/lib/event";
+import { MAX_BYTES, deckProblem, uploadDeck } from "@/lib/upload";
 import AppBar, { Stripe } from "../appbar";
+import Countdown, { useSecondsLeft } from "../countdown";
 
-const MAX_BYTES = 15 * 1024 * 1024;
+const ENTRY_KEY = "h4s-entry"; // "<id>.<token>" of this browser's last submission
+const noSubscribe = () => () => {};
 
 function SubmitForm() {
   const preset = Number(useSearchParams().get("sdg")) || 0;
@@ -16,7 +20,9 @@ function SubmitForm() {
   const [members, setMembers] = useState(["", "", "", ""]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
-  const [done, setDone] = useState(false);
+  const [done, setDone] = useState<{ link: string; number?: number } | null>(null);
+  const left = useSecondsLeft();
+  const earlier = useSyncExternalStore(noSubscribe, () => localStorage.getItem(ENTRY_KEY), () => null);
   const [deck, setDeck] = useState<File | null>(null);
   const [drag, setDrag] = useState(false);
   const deckInput = useRef<HTMLInputElement>(null);
@@ -34,19 +40,10 @@ function SubmitForm() {
 
     setBusy(true);
     const id = crypto.randomUUID();
-    const signed = await fetch("/api/upload-url", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ size: file.size }) });
-    if (!signed.ok) { setBusy(false); return setErr((await signed.json().catch(() => null))?.error ?? "Could not start the upload."); }
-    const { store: planned, key: path, url } = await signed.json();
-    let store: "r2" | "supabase" = planned;
-    if (planned === "r2") {
-      const up = await fetch(url, { method: "PUT", headers: { "Content-Type": "application/pdf" }, body: file }).catch(() => null);
-      if (!up?.ok) store = "supabase"; // R2 unreachable: fall back
-    }
-    if (store === "supabase") {
-      const up = await supabase.storage.from("decks").upload(path, file, { contentType: "application/pdf" });
-      if (up.error) { setBusy(false); return setErr("Upload failed. Check your connection and try again."); }
-    }
-    const ins = await supabase.from("submissions").insert({
+    const token = crypto.randomUUID();
+    const up = await uploadDeck(file);
+    if ("error" in up) { setBusy(false); return setErr(up.error); }
+    const row = {
       id,
       team_name: String(f.get("team")).trim(),
       members: names,
@@ -55,12 +52,19 @@ function SubmitForm() {
       sdg,
       title: String(f.get("title")).trim(),
       summary: String(f.get("summary")).trim() || null,
-      deck_path: path,
-      deck_store: store,
-    });
+      deck_path: up.path,
+      deck_store: up.store,
+    };
+    let ins = await supabase.from("submissions").insert({ ...row, edit_token: token });
+    const receipts = ins.error?.code !== "PGRST204"; // no edit_token column yet: submit without a receipt link
+    if (!receipts) ins = await supabase.from("submissions").insert(row);
     setBusy(false);
-    if (ins.error) return setErr(ins.error.message);
-    setDone(true);
+    if (ins.error) return setErr(ins.error.code === "42501" ? "Submissions are closed." : ins.error.message);
+    if (!receipts) return setDone({ link: "" });
+    const link = `${id}.${token}`;
+    localStorage.setItem(ENTRY_KEY, link);
+    const { data } = await supabase.rpc("submission_receipt", { p_id: id, p_token: token });
+    setDone({ link, number: data?.[0]?.number });
   }
 
   if (done)
@@ -69,12 +73,38 @@ function SubmitForm() {
         <AppBar />
         <main style={{ flex: 1, display: "grid", placeItems: "center", padding: 24, textAlign: "center" }}>
           <div className="rise">
-            <p className="label">Received</p>
+            <p className="label">{done.number ? `Entry ${String(done.number).padStart(3, "0")} received` : "Received"}</p>
             <h1 style={{ fontSize: "clamp(56px, 11vw, 140px)", margin: "10px 0 20px" }}>
               You&apos;re <em style={{ color: "var(--yellow)" }}>in.</em>
             </h1>
             <p style={{ color: "var(--mute)", marginBottom: 32, maxWidth: "40ch", marginInline: "auto" }}>
               Your deck is submitted and will go to the judges without your names on it. The organisers will email you.
+            </p>
+            {done.link && (
+              <p style={{ color: "var(--mute)", marginBottom: 32, maxWidth: "44ch", marginInline: "auto" }}>
+                <Link href={`/entry#${done.link}`} style={{ color: "var(--yellow)" }}>Open your entry page</Link> and bookmark it.
+                That private link is the only way to replace your deck before {DEADLINE_LABEL}.
+              </p>
+            )}
+            <Link className="btn" href="/">Back home</Link>
+          </div>
+        </main>
+        <Stripe />
+      </div>
+    );
+
+  if (left !== null && left <= 0)
+    return (
+      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+        <AppBar><Link href="/" className="label">← Back</Link></AppBar>
+        <main style={{ flex: 1, display: "grid", placeItems: "center", padding: 24, textAlign: "center" }}>
+          <div className="rise">
+            <p className="label">Round 1</p>
+            <h1 style={{ fontSize: "clamp(48px, 9vw, 120px)", margin: "10px 0 20px" }}>
+              Submissions are <em style={{ color: "var(--yellow)" }}>closed.</em>
+            </h1>
+            <p style={{ color: "var(--mute)", marginBottom: 32, maxWidth: "44ch", marginInline: "auto" }}>
+              Round 1 closed on {DEADLINE_LABEL}. The ten best teams go to the offline final round on {FINALS_LABEL}.
             </p>
             <Link className="btn" href="/">Back home</Link>
           </div>
@@ -85,7 +115,7 @@ function SubmitForm() {
 
   const field = { display: "grid", gap: 7 } as const;
   const accent = sdg ? SDG_COLORS[sdg] : "var(--yellow)";
-  const deckBad = !deck ? "" : deck.type !== "application/pdf" ? "That isn't a PDF. Export your slides as PDF first." : deck.size > MAX_BYTES ? "That file is over 15 MB." : "";
+  const deckBad = deck ? deckProblem(deck) : "";
   return (
     <div>
       <AppBar><Link href="/" className="label">← Back</Link></AppBar>
@@ -99,7 +129,13 @@ function SubmitForm() {
             <li><b>1</b>One submission per team, up to four members.</li>
             <li><b>2</b>A single PDF, 15 MB or less. Using PowerPoint or Slides? Export as PDF first.</li>
             <li><b>3</b>Judging is blind. Leave your names, college and logos off the slides.</li>
+            <li><b>4</b><span>Submissions close on {DEADLINE_LABEL}. <Countdown /></span></li>
           </ul>
+          {earlier && (
+            <p className="hint" style={{ marginTop: 18 }}>
+              Already submitted from this browser? <Link href={`/entry#${earlier}`} style={{ color: "var(--yellow)" }}>Open your entry</Link> to replace the deck.
+            </p>
+          )}
         </aside>
 
         <form onSubmit={onSubmit} className="submit-form rise" style={{ animationDelay: "120ms", ["--accent" as string]: accent }}>

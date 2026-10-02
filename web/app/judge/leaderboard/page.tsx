@@ -3,16 +3,16 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { SDG_COLORS } from "@/lib/sdg";
+import { FINALISTS } from "@/lib/event";
 import AppBar, { Stripe } from "../../appbar";
 
 type Row = { submission_id: string; number: number; team_name: string; title: string; sdg: number; judges_scored: number; score_pct: number | null };
-
-const FINALISTS = 10;
 
 export default function Leaderboard() {
   const router = useRouter();
   const [rows, setRows] = useState<Row[] | null>(null);
   const [err, setErr] = useState("");
+  const [published, setPublished] = useState<boolean | null>(null); // null: not loaded, or the settings table isn't there
 
   useEffect(() => {
     (async () => {
@@ -21,8 +21,17 @@ export default function Leaderboard() {
       const { data, error } = await supabase.rpc("leaderboard");
       if (error) return setErr(error.message);
       setRows((data ?? []) as Row[]);
+      const settings = await supabase.from("event_settings").select("results_published").maybeSingle();
+      if (settings.data) setPublished(settings.data.results_published);
     })();
   }, [router]);
+
+  async function togglePublished() {
+    const next = !published;
+    const { data, error } = await supabase.from("event_settings").update({ results_published: next }).eq("id", true).select("results_published");
+    if (error || !data?.length) return setErr(error?.message ?? "Only an admin can publish the results.");
+    setPublished(next);
+  }
 
   return (
     <div style={{ minHeight: "100vh" }}>
@@ -32,9 +41,19 @@ export default function Leaderboard() {
         <h1 className="rise" style={{ fontSize: "clamp(56px, 10vw, 128px)", margin: "10px 0 16px" }}>
           Leader<em style={{ color: "var(--yellow)" }}>board.</em>
         </h1>
-        <p style={{ color: "var(--mute)", marginBottom: 48, maxWidth: "52ch" }}>
+        <p style={{ color: "var(--mute)", marginBottom: 24, maxWidth: "52ch" }}>
           Each judge&apos;s weighted score, averaged across judges. The top {FINALISTS} go to the final round.
         </p>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", marginBottom: 48 }}>
+          {published !== null && !!rows?.length && (
+            <>
+              <button className={`btn small${published ? " ghost" : ""}`} onClick={togglePublished}>
+                {published ? "Unpublish finalists" : "Publish finalists on the homepage"}
+              </button>
+              <span className="label">{published ? "Live: team names of the top entries are public" : "Not published"}</span>
+            </>
+          )}
+        </div>
         {err && <p role="alert" style={{ color: "var(--red)" }}>{err}</p>}
         {rows && !rows.length && !err && <p style={{ color: "var(--mute)" }}>No admin access, or no submissions yet.</p>}
         <ol style={{ listStyle: "none" }}>

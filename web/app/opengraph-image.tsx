@@ -13,6 +13,7 @@ export default function Image() {
         <div style={{ display: "flex", flexDirection: "column", fontSize: 124, fontWeight: 700, letterSpacing: -5, lineHeight: 1 }}>
           <div style={{ display: "flex" }}>Hack for SDG</div>
           <div style={{ display: "flex", fontSize: 54, letterSpacing: -2, color: "#FCC30B", marginTop: 20 }}>Eighteen goals. One idea of yours.</div>
+          <div style={{ display: "flex", fontSize: 30, letterSpacing: 0, fontWeight: 500, color: "#9a968a", marginTop: 26 }}>Submit by 10 October · Offline finals 17 October</div>
         </div>
         <div style={{ display: "flex", gap: 6 }}>
           {Object.entries(SDG_COLORS).map(([n, c]) => (
