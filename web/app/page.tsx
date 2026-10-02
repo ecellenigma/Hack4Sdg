@@ -67,12 +67,29 @@ export default function Home() {
       </nav>
 
       <header className="hero">
-        <div className="partners">
-          <span>With</span>
-          <Image src="/nmit.png" alt="NITTE (Deemed to be University)" width={900} height={360} priority />
-          <i aria-hidden />
-          <span>Organised by</span>
-          <Image src="/enigma.png" alt="E-Cell Enigma" width={302} height={129} priority />
+        <div className="lockup">
+          <Image className="lk-nitte" src="/nmit.png" alt="NITTE (Deemed to be University)" width={900} height={360} priority />
+          <p className="lk-campus"><i aria-hidden />Off Campus Centre · Bengaluru<i aria-hidden /></p>
+          <div className="lk-row">
+            <div className="lk-grp">
+              <Image src="/aicte.png" alt="AICTE" width={316} height={316} priority />
+              <Image src="/aicte-idea-lab.png" alt="AICTE IDEA Lab" width={509} height={491} priority />
+            </div>
+            <i className="lk-div" aria-hidden />
+            <div className="lk-grp lk-col">
+              <Image src="/enigma.png" alt="E-Cell Enigma, Entrepreneurship Cell NMIT" width={302} height={129} priority />
+              <span>Supported by</span>
+              <strong>Career Development Centre (CDC)</strong>
+            </div>
+            <i className="lk-div" aria-hidden />
+            <div className="lk-grp lk-col">
+              <span>In association with</span>
+              <div className="lk-grp">
+                <Image src="/aiesec.png" alt="AIESEC" width={1265} height={259} priority />
+                <Image className="lk-sdg" src="/hack4sdg.png" alt="Hack for SDG" width={282} height={203} priority />
+              </div>
+            </div>
+          </div>
         </div>
         <p className="eyebrow">AIESEC × E-Cell Enigma · The Global Goals Hackathon</p>
         <h1>
