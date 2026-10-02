@@ -68,9 +68,12 @@ export default function Home() {
 
       <header className="hero">
         <div className="lockup">
-          <Image className="lk-nitte" src="/nmit.png" alt="NITTE (Deemed to be University)" width={900} height={360} priority />
-          <p className="lk-campus"><i aria-hidden />Off Campus Centre · Bengaluru<i aria-hidden /></p>
           <div className="lk-row">
+            <div className="lk-grp lk-col">
+              <Image src="/nmit.png" alt="NITTE (Deemed to be University)" width={900} height={360} priority />
+              <span>Off Campus Centre · Bengaluru</span>
+            </div>
+            <i className="lk-div" aria-hidden />
             <div className="lk-grp">
               <Image src="/aicte.png" alt="AICTE" width={316} height={316} priority />
               <Image src="/aicte-idea-lab.png" alt="AICTE IDEA Lab" width={509} height={491} priority />
