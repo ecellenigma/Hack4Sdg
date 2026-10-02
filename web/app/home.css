@@ -34,9 +34,12 @@
 .hero h1 span:nth-child(2) { animation-delay: .12s; }
 .hero h1 em { color: #FCC30B; padding-right: .05em; }
 .sub { max-width: 52ch; font-size: clamp(17px, 1.6vw, 21px); color: #cfcbbf; margin: 28px 0; }
-.dates { display: flex; flex-wrap: wrap; gap: 10px 32px; margin-bottom: 28px; color: var(--mute); font-size: 15px; }
+.dates { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 32px; margin-bottom: 28px; color: var(--mute); font-size: 15px; }
 .dates b { color: #FCC30B; font-weight: 700; margin-right: 8px; }
-.count b { margin: 0 0 0 6px; color: var(--fg); font-variant-numeric: tabular-nums; }
+.dates .count { display: inline-flex; align-items: baseline; gap: 12px; padding-left: 32px; border-left: 1px solid var(--line); }
+.dates .count b { margin: 0; color: var(--fg); font-size: 26px; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.dates .count i { color: #FCC30B; font-size: 14px; font-weight: 600; letter-spacing: 0; margin: 0 6px 0 2px; }
+.dates .count i:last-child { margin-right: 0; }
 .hero-cta { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; margin-bottom: 44px; }
 .big { display: inline-flex; gap: 14px; align-items: center; background: #FCC30B; color: var(--ink); text-decoration: none; font-weight: 700; font-size: 20px; letter-spacing: -0.02em; padding: 18px 30px; border-radius: 999px; transition: transform .2s, box-shadow .2s, background .2s; }
 .big span { transition: transform .2s; }
@@ -185,6 +188,7 @@
 }
 @media (max-width: 900px) {
   .nav-links a:not(.pill) { display: none; }
+  .dates .count { padding-left: 0; border-left: 0; flex-basis: 100%; }
   .mosaic { grid-template-columns: repeat(6, 1fr); }
   .facts { grid-template-columns: 1fr 1fr; }
   .facts div:nth-child(2) { border-right: 0; }

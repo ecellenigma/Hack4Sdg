@@ -50,6 +50,9 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--yellow); outlin
 select option { background: var(--surface); color: var(--fg); }
 ::placeholder { color: #6d6a60; }
 
+.count i { font-style: normal; }
+.count b { font-variant-numeric: tabular-nums; }
+
 .appbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 28px; border-bottom: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; font-size: 18px; }
 .logo { display: grid; grid-template-columns: repeat(3, 8px); gap: 2px; }

@@ -21,7 +21,8 @@ export default function Countdown() {
   const two = (n: number) => String(n).padStart(2, "0");
   return (
     <span className="count" role="timer">
-      Closes in <b>{Math.floor(left / 86400)}d {two(Math.floor(left / 3600) % 24)}h {two(Math.floor(left / 60) % 60)}m {two(left % 60)}s</b>
+      <span>Closes in</span>{" "}
+      <b>{Math.floor(left / 86400)}<i>d</i> {two(Math.floor(left / 3600) % 24)}<i>h</i> {two(Math.floor(left / 60) % 60)}<i>m</i> {two(left % 60)}<i>s</i></b>
     </span>
   );
 }
