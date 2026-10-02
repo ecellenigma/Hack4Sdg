@@ -1,10 +1,11 @@
 "use client";
 import "./submit.css";
-import { Suspense, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import { SDG_COLORS, SDG_NAMES } from "@/lib/sdg";
+import { PROBLEMS } from "@/lib/problems";
+import { SDG_COLORS, SDG_NAMES, onColor } from "@/lib/sdg";
 import AppBar, { Stripe } from "../appbar";
 
 const MAX_BYTES = 15 * 1024 * 1024;
@@ -16,6 +17,9 @@ function SubmitForm() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [done, setDone] = useState(false);
+  const [deck, setDeck] = useState<File | null>(null);
+  const [drag, setDrag] = useState(false);
+  const deckInput = useRef<HTMLInputElement>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -81,6 +85,7 @@ function SubmitForm() {
 
   const field = { display: "grid", gap: 7 } as const;
   const accent = sdg ? SDG_COLORS[sdg] : "var(--yellow)";
+  const deckBad = !deck ? "" : deck.type !== "application/pdf" ? "That isn't a PDF. Export your slides as PDF first." : deck.size > MAX_BYTES ? "That file is over 15 MB." : "";
   return (
     <div>
       <AppBar><Link href="/" className="label">← Back</Link></AppBar>
@@ -123,11 +128,26 @@ function SubmitForm() {
           </div>
 
           <div style={field}>
-            <label className="label" htmlFor="sdg">Sustainable Development Goal</label>
-            <select id="sdg" value={sdg} onChange={(e) => setSdg(+e.target.value)} required style={{ borderLeft: `10px solid ${accent}` }}>
-              <option value={0}>Choose a goal…</option>
-              {Object.entries(SDG_NAMES).map(([n, name]) => <option key={n} value={n}>{n === "18" ? "18. Student innovation (your own idea)" : `${n}. ${name}`}</option>)}
-            </select>
+            <span className="label" id="sdg-label">Sustainable Development Goal</span>
+            <div className="goal-grid" role="radiogroup" aria-labelledby="sdg-label">
+              {Object.keys(SDG_COLORS).map((k) => {
+                const g = +k;
+                return (
+                  <button key={g} type="button" role="radio" aria-checked={g === sdg} aria-label={`Goal ${g}: ${SDG_NAMES[g]}`} title={SDG_NAMES[g]}
+                    onClick={() => setSdg(g)} style={{ background: SDG_COLORS[g], color: onColor(SDG_COLORS[g]) }}>
+                    {g === 18 ? "+" : g}
+                  </button>
+                );
+              })}
+            </div>
+            {sdg ? (
+              <div className="goal-pick" key={sdg} style={{ background: SDG_COLORS[sdg], color: onColor(SDG_COLORS[sdg]) }}>
+                <b>{sdg === 18 ? "Student innovation (your own idea)" : `${sdg}. ${SDG_NAMES[sdg]}`}</b>
+                <p>{PROBLEMS[sdg]}</p>
+              </div>
+            ) : (
+              <p className="hint">Pick a tile to see its problem statement.</p>
+            )}
           </div>
 
           <div style={field}>
@@ -142,10 +162,36 @@ function SubmitForm() {
 
           <div style={field}>
             <label className="label" htmlFor="deck">Presentation (PDF)</label>
-            <input id="deck" name="deck" type="file" accept="application/pdf" required className="drop" />
+            <div
+              className={`drop${drag ? " over" : ""}${deck ? " has" : ""}${deckBad ? " bad" : ""}`}
+              onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
+              onDragLeave={() => setDrag(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setDrag(false);
+                const files = e.dataTransfer.files;
+                if (!files.length || !deckInput.current) return;
+                deckInput.current.files = files;
+                setDeck(files[0]);
+              }}
+            >
+              <input ref={deckInput} id="deck" name="deck" type="file" accept="application/pdf" required onChange={(e) => setDeck(e.target.files?.[0] ?? null)} />
+              {deck ? (
+                <>
+                  <b>{deck.name}</b>
+                  <span>{deckBad || `${(deck.size / 1024 / 1024).toFixed(1)} MB · click to replace`}</span>
+                </>
+              ) : (
+                <>
+                  <b>Drop your PDF here</b>
+                  <span>or click to browse · 15 MB max</span>
+                </>
+              )}
+            </div>
           </div>
 
           {err && <p role="alert" style={{ color: "var(--red)" }}>{err}</p>}
+          {busy && <div className="progress" role="progressbar" aria-label="Uploading your deck"><i /></div>}
           <button className="btn" disabled={busy}>{busy ? "Uploading…" : "Submit idea →"}</button>
         </form>
       </main>

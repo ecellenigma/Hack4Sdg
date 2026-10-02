@@ -5,12 +5,34 @@
 .rules li:last-child { border-bottom: 1px solid var(--line); }
 .rules b { color: var(--yellow); font-size: 20px; letter-spacing: -0.03em; }
 .submit-form { display: grid; gap: 26px; background: var(--surface); border: 1px solid var(--line); border-top: 6px solid var(--accent, var(--yellow)); border-radius: 16px; padding: 36px; transition: border-color .3s; }
-.drop { border: 1.5px dashed rgba(244, 241, 232, .3) !important; padding: 22px !important; cursor: pointer; }
-.drop::file-selector-button { background: var(--fg); color: #0b0b0a; border: 0; border-radius: 999px; padding: 8px 16px; margin-right: 14px; font: inherit; font-weight: 600; cursor: pointer; }
+.goal-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px; }
+.goal-grid button { aspect-ratio: 1; border: 1px solid var(--line); border-radius: 6px; font-weight: 700; font-size: 17px; letter-spacing: -0.03em; transition: transform .15s, opacity .15s; }
+.goal-grid button:hover { transform: translateY(-3px); }
+.goal-grid:has([aria-checked=true]) button[aria-checked=false] { opacity: .4; }
+.goal-grid button[aria-checked=true] { outline: 3px solid var(--fg); outline-offset: 2px; }
+.goal-pick { border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin-top: 6px; animation: rise .3s cubic-bezier(.2, .8, .2, 1) both; }
+.goal-pick b { display: block; font-size: 18px; letter-spacing: -0.02em; margin-bottom: 4px; }
+.goal-pick p { font-size: 15px; line-height: 1.4; }
+.hint { color: var(--mute); font-size: 14px; }
+
+.drop { position: relative; display: grid; gap: 4px; justify-items: center; text-align: center; border: 1.5px dashed rgba(244, 241, 232, .3); border-radius: 10px; padding: 30px 20px; cursor: pointer; transition: border-color .15s, background .15s; }
+.drop:hover, .drop.over, .drop:focus-within { border-color: var(--yellow); background: rgba(252, 195, 11, .06); }
+.drop.has { border-style: solid; border-color: var(--ok); }
+.drop.bad { border-color: var(--red); }
+.drop.bad span { color: var(--red); }
+.drop b { font-size: 17px; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.drop span { color: var(--mute); font-size: 14px; }
+.drop input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; } /* stays focusable so `required` still works */
+
+.progress { height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.progress i { display: block; width: 40%; height: 100%; border-radius: inherit; background: var(--accent, var(--yellow)); animation: slide-bar 1.1s ease-in-out infinite; }
+@keyframes slide-bar { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+@media (prefers-reduced-motion: reduce) { .progress i { animation: none; width: 100%; opacity: .6; } .goal-pick { animation: none; } }
 @media (max-width: 900px) {
   .submit-grid { grid-template-columns: 1fr; gap: 36px; padding-top: 32px; }
   .submit-side { position: static; }
   .submit-form { padding: 24px; }
+  .goal-grid { grid-template-columns: repeat(6, 1fr); }
 }
 
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }

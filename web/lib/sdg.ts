@@ -19,6 +19,8 @@ export const SDG_NAMES: Record<number, string> = {
 /** Readable text colour (dark or white) on top of an SDG colour. */
 export function onColor(hex: string): string {
   const n = parseInt(hex.slice(1), 16);
-  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.6 ? "#0b0b0a" : "#ffffff";
+  const lin = (v: number) => ((v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+  const L = 0.2126 * lin((n >> 16) & 255) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
+  // WCAG relative luminance. This cutoff keeps every goal colour at 4.5:1 or better.
+  return L > 0.24 ? "#0b0b0a" : "#ffffff";
 }

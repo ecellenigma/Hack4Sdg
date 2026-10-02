@@ -8,6 +8,7 @@ const serif = Instrument_Serif({ variable: "--font-serif", subsets: ["latin"], w
 const mono = DM_Mono({ variable: "--font-mono", subsets: ["latin"], weight: ["400", "500"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://hack4sdg.vercel.app"),
   title: "Hack for SDG",
   description: "Hack for SDG, the Global Goals Hackathon: pitch a solution to a real-world problem tied to the UN Sustainable Development Goals.",
 };

@@ -9,7 +9,7 @@ const STEPS = [
   ["Pick a problem", "Choose a goal's problem statement, or bring your own under Student Innovation."],
   ["Build the idea", "A presentation of your solution and a realistic way forward to implement it."],
   ["Submit the deck", "Upload one PDF by 10 October. It goes to the judges without your names on it."],
-  ["Get scored", "Judges rate every deck on five criteria. Zero registration fee."],
+  ["Get scored", "Judges rate every deck on five criteria, ten points each."],
   ["Reach the finals", "The ten best teams go on to the offline final round on 17 October and pitch for 7–8 minutes."],
 ];
 
@@ -23,6 +23,7 @@ const CRITERIA = [
 
 const NAMES = Object.values(SDG_NAMES).slice(0, 17);
 const COLORS = Object.values(SDG_COLORS);
+const STEP_COLORS = [1, 9, 7, 15, 6, 14].map((n) => SDG_COLORS[n]); // red to blue, one hue per step
 
 export default function Home() {
   return (
@@ -89,7 +90,7 @@ export default function Home() {
           <h2>From a hunch to the <em>final round.</em></h2>
           <ol>
             {STEPS.map(([t, d], i) => (
-              <li key={t} style={{ ["--c" as string]: COLORS[(i * 3) % 17] }}>
+              <li key={t} style={{ ["--c" as string]: STEP_COLORS[i] }}>
                 <span className="step-n">{String(i + 1).padStart(2, "0")}</span>
                 <h3>{t}</h3>
                 <p>{d}</p>
