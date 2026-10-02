@@ -2,10 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { SDG_COLORS } from "@/lib/sdg";
 
-const NINE = Object.values(SDG_COLORS).slice(0, 9);
-
 export function Logo() {
-  return <span className="logo" aria-hidden>{NINE.map((c) => <i key={c} style={{ background: c }} />)}</span>;
+  return <Image src="/hack4sdg.png" alt="" width={282} height={203} priority className="brand-logo" />;
 }
 
 export function Stripe() {
@@ -17,7 +15,7 @@ export function BrandBar() {
     <div className="brandbar">
       <Image src="/enigma.png" alt="E-Cell Enigma" width={302} height={129} priority className="hl hl-enigma" />
       <span className="x" aria-hidden>×</span>
-      <Link href="/" className="brand" aria-label="Hack for SDG"><Logo />Hack for SDG</Link>
+      <Link href="/" className="brand" aria-label="Hack for SDG"><Logo /><span className="sr">Hack for SDG</span></Link>
     </div>
   );
 }
