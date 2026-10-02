@@ -89,7 +89,7 @@ export default function Home() {
               <span>In association with</span>
               <div className="lk-grp">
                 <Image src="/aiesec.png" alt="AIESEC" width={1265} height={259} priority />
-                <Image className="lk-sdg" src="/hack4sdg.png" alt="Hack for SDG" width={282} height={203} priority />
+                <Image className="lk-sdg" src="/hack4sdg-dark.png" alt="Hack for SDG" width={282} height={203} priority />
               </div>
             </div>
           </div>

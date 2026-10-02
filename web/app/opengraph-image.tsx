@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { SDG_COLORS, onColor } from "@/lib/sdg";
 
-const LOGO = `data:image/png;base64,${readFileSync(join(process.cwd(), "public/hack4sdg.png")).toString("base64")}`;
+const LOGO = `data:image/png;base64,${readFileSync(join(process.cwd(), "public/hack4sdg-dark.png")).toString("base64")}`;
 
 export const alt = "Hack for SDG, the Global Goals Hackathon";
 export const size = { width: 1200, height: 630 };

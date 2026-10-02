@@ -3,7 +3,7 @@ import Link from "next/link";
 import { SDG_COLORS } from "@/lib/sdg";
 
 export function Logo() {
-  return <Image src="/hack4sdg.png" alt="" width={282} height={203} priority className="brand-logo" />;
+  return <Image src="/hack4sdg-dark.png" alt="" width={282} height={203} priority className="brand-logo" />;
 }
 
 export function Stripe() {
