@@ -63,3 +63,13 @@ select option { background: var(--surface); color: var(--fg); }
 @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 .rise { animation: rise .6s cubic-bezier(.2, .8, .2, 1) both; }
 @media (prefers-reduced-motion: reduce) { .rise { animation: none; } .btn { transition: none; } }
+
+.brandbar { display: flex; align-items: center; gap: 28px; min-width: 0; }
+.brandbar .sep { width: 1px; height: 26px; background: var(--line); }
+.brandbar .hl { width: auto; display: block; }
+.brandbar .hl-nitte { height: 34px; }
+.brandbar .hl-enigma { height: 32px; }
+@media (max-width: 760px) { .brandbar { gap: 16px; } .brandbar .hl-nitte { height: 26px; } .brandbar .hl-enigma { height: 24px; } .brandbar .brand { font-size: 15px; } }
+@media (max-width: 480px) { .brandbar .sep { display: none; } .brandbar .logo { display: none; } }
+
+.brandbar .x { color: var(--mute); font-size: 20px; line-height: 1; }

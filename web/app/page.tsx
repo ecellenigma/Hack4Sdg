@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
+import { BrandBar } from "./appbar";
 import GoalExplorer from "./goal-explorer";
 import Mosaic from "./mosaic";
 import Countdown from "./countdown";
@@ -53,10 +55,7 @@ export default function Home() {
   return (
     <div className="h">
       <nav className="nav">
-        <Link href="/" className="brand" aria-label="Hack for SDG">
-          <span className="logo" aria-hidden>{COLORS.slice(0, 9).map((c) => <i key={c} style={{ background: c }} />)}</span>
-          Hack for SDG
-        </Link>
+        <BrandBar />
         <div className="nav-links">
           <a href="#goals">Goals</a>
           <a href="#journey">Journey</a>
@@ -68,6 +67,13 @@ export default function Home() {
       </nav>
 
       <header className="hero">
+        <div className="partners">
+          <span>With</span>
+          <Image src="/nmit.png" alt="NITTE (Deemed to be University)" width={900} height={360} priority />
+          <i aria-hidden />
+          <span>Organised by</span>
+          <Image src="/enigma.png" alt="E-Cell Enigma" width={302} height={129} priority />
+        </div>
         <p className="eyebrow">AIESEC × E-Cell Enigma · The Global Goals Hackathon</p>
         <h1>
           <span>Eighteen goals.</span>
