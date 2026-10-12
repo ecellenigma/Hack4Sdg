@@ -1,6 +1,6 @@
 /** Event facts in one place. Leave a string empty and the site shows "To be announced". */
-export const SUBMISSIONS_CLOSE = new Date("2026-10-10T23:59:59+05:30"); // the database enforces its own copy: event_settings.submissions_close
-export const DEADLINE_LABEL = "10 October 2026, 11:59 PM IST";
+export const SUBMISSIONS_CLOSE = new Date("2026-10-13T23:59:59+05:30"); // the database enforces its own copy: event_settings.submissions_close
+export const DEADLINE_LABEL = "13 October 2026, 11:59 PM IST";
 export const FINALS_LABEL = "17 October 2026";
 export const FINALISTS = 10;
 export const VENUE = "";
