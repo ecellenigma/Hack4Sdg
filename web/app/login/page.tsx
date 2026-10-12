@@ -16,9 +16,10 @@ export default function Login() {
     setBusy(true);
     setMsg("");
     const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) { setBusy(false); return setMsg(error.message); }
+    const { data: partner } = await supabase.rpc("is_partner");
     setBusy(false);
-    if (error) return setMsg(error.message);
-    router.push("/judge");
+    router.push(partner === true ? "/partner" : "/judge");
   }
 
   return (
@@ -26,7 +27,7 @@ export default function Login() {
       <AppBar />
       <main style={{ flex: 1, display: "grid", placeItems: "center", padding: "48px 24px" }}>
         <form onSubmit={submit} className="rise" style={{ width: "100%", maxWidth: 440 }}>
-          <p className="label">Judges only</p>
+          <p className="label">Judges &amp; partners</p>
           <h1 style={{ fontSize: "clamp(48px, 9vw, 80px)", margin: "10px 0 32px" }}>
             The judging <em style={{ color: "var(--yellow)" }}>desk.</em>
           </h1>
@@ -43,7 +44,7 @@ export default function Login() {
           </div>
           {msg && <p role="alert" style={{ color: "var(--red)", marginTop: 16 }}>{msg}</p>}
           <p style={{ color: "var(--mute)", fontSize: 14, marginTop: 28 }}>
-            Judge accounts are created by the organisers. Ask them if you need access.
+            Judge and partner accounts are created by the organisers. Ask them if you need access.
           </p>
         </form>
       </main>

@@ -6,7 +6,7 @@ Homepage and online judging dashboard for **Hack for SDG – The Global Goals Ha
 
 ## About the event
 
-College students form teams (max 4), pick a problem statement aligned with the UN Sustainable Development Goals (SDG 1–17, or SDG 18: their own idea), and pitch a solution in 7–8 minutes. Prelims are free to enter; round 1 submissions close on 13 October 2026. The 10 best teams go to the offline final round on 17 October 2026.
+College students form teams (max 4), pick a problem statement aligned with the UN Sustainable Development Goals (SDG 1–17, or SDG 18: their own idea), and pitch a solution in 7–8 minutes. Prelims are free to enter; round 1 submissions close on 14 October 2026. The 10 best teams go to the offline final round on 17 October 2026.
 
 Event facts shown on the site (deadline, finals date, venue, prizes, contact) live in `web/lib/event.ts`. The deadline is also enforced in the database: `event_settings.submissions_close`.
 

@@ -1,0 +1,19 @@
+.pt { max-width: 1100px; margin: 0 auto; padding: 40px 20px 96px; }
+.pt-stats { display: flex; flex-wrap: wrap; gap: 28px; margin: 24px 0 8px; }
+.pt-stats b { display: block; font-size: 44px; letter-spacing: -0.04em; line-height: 1; }
+.pt-sdgs { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; }
+.pt-sdgs span { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--c); color: var(--fg-on); font-weight: 600; }
+.pt-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 28px 0 8px; }
+.pt-tools input { flex: 1 1 240px; min-width: 0; }
+.pt-tools select { flex: 0 1 260px; min-width: 0; }
+.pt-row { border-top: 1px solid var(--line); padding: 16px 0 16px 18px; position: relative; }
+.pt-row::before { content: ""; position: absolute; left: 0; top: 16px; bottom: 16px; width: 6px; background: var(--c); }
+.pt-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.pt-head h3 { font-size: 26px; letter-spacing: -0.03em; margin: 2px 0; }
+.pt-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.pt-meta { color: var(--mute); font-size: 13px; margin-top: 4px; }
+.pt-detail { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-top: 16px; font-size: 15px; }
+.pt-detail ul { list-style: none; padding: 0; margin: 6px 0 0; }
+.pt-detail li { padding: 2px 0; }
+.pt-detail p { margin: 6px 0 0; color: #b5b1a5; overflow-wrap: anywhere; }
+@media (max-width: 560px) { .pt-head h3 { font-size: 22px; } }

@@ -13,7 +13,7 @@ const STEPS = [
   ["Form your team", "Up to four people. Mix skills, not just friends."],
   ["Pick a problem", "Choose a goal's problem statement, or bring your own under Student Innovation."],
   ["Build the idea", "A presentation of your solution and a realistic way forward to implement it."],
-  ["Submit the deck", "Upload one PDF by 13 October. It goes to the judges without your names on it."],
+  ["Submit the deck", "Upload one PDF by 14 October. It goes to the judges without your names on it."],
   ["Get scored", "Judges rate every deck on five criteria, ten points each."],
   ["Reach the finals", "The ten best teams go on to the offline final round on 17 October and pitch for 7–8 minutes."],
 ];
@@ -104,7 +104,7 @@ export default function Home() {
           Development Goals and pitch a solution that makes a difference.
         </p>
         <p className="dates">
-          <span><b>13 Oct</b> Round 1 submissions close</span>
+          <span><b>14 Oct</b> Round 1 submissions close</span>
           <span><b>17 Oct</b> Offline final round</span>
           <Countdown />
         </p>
@@ -181,7 +181,7 @@ export default function Home() {
           <div className="rounds">
             <article>
               <p className="round-tag">Round 1 · Online</p>
-              <h3>Until 13 October</h3>
+              <h3>Until 14 October</h3>
               <p>Submit one PDF deck of your idea on this site. Judges score every deck blind.</p>
               <Link href="/submit">Submit your idea →</Link>
             </article>

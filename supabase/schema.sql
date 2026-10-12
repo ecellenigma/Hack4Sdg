@@ -170,7 +170,7 @@ create table public.event_settings (
   finalists smallint not null default 10 check (finalists > 0),
   results_published boolean not null default false
 );
-insert into public.event_settings (submissions_close) values ('2026-10-13 23:59:59+05:30');
+insert into public.event_settings (submissions_close) values ('2026-10-14 23:59:59+05:30');
 alter table public.event_settings enable row level security;
 create policy "anyone reads settings" on public.event_settings for select to anon, authenticated using (true);
 create policy "admin edits settings" on public.event_settings for update to authenticated using (public.is_admin()) with check (public.is_admin());
